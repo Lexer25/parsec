@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "cb65d712-dc82-49c3-a48d-8f7183ff4aaf": {
+      "ProjectGuid": "cb65d712-dc82-49c3-a48d-8f7183ff4aaf",
+      "DisplayName": "ParsecIntegrationClient",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}

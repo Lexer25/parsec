@@ -1,0 +1,13 @@
+C:\Users\Andre\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.csproj.AssemblyReference.cache
+C:\Users\Andre\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.csproj.SuggestedBindingRedirects.cache
+C:\Users\Andre\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.ProjectInstaller.resources
+C:\Users\Andre\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.csproj.GenerateResource.cache
+C:\Users\Andre\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.csproj.CoreCompileInputs.cache
+C:\Users\Andre\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.exe
+C:\Users\Andre\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.pdb
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.csproj.AssemblyReference.cache
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.ProjectInstaller.resources
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.csproj.GenerateResource.cache
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.csproj.CoreCompileInputs.cache
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.exe
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.pdb
