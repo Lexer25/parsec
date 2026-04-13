@@ -1,96 +1,102 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\",
+  "WorkspaceRootPath": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|ParsecIntegrationClient||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|c:\\source\\ralsoft\\parsecintegrationclinet_service-main\\parsecintegrationclient\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\service1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\service1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|d:\\source\\repos\\ralsoft\\parsecintegrationclinet_service-main\\parsecintegrationclient\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\models\\dbmodelrowidindev.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\models\\dbmodelrowidindev.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\services\\parsecservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|c:\\source\\ralsoft\\parsecintegrationclinet_service-main\\parsecintegrationclient\\services\\parsecservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\services\\parsecservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\services\\databaseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\services\\databaseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\services\\mainjob.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\services\\mainjob.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\services\\mainjob.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\web references\\integrationwebservice\\baseobject.datasource||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\web references\\integrationwebservice\\baseobject.datasource||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\models\\dbmodeladdpeople.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\models\\dbmodeladdpeople.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\models\\dbmodeladdidentifier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\models\\dbmodeladdidentifier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\web references\\integrationwebservice\\reference.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\web references\\integrationwebservice\\reference.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\models\\clientstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\models\\clientstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\services\\settingsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\services\\settingsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\models\\dbmodeladdcard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\models\\dbmodeladdcard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\services\\continuesessionjob.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\services\\continuesessionjob.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\services\\logger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\services\\logger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\models\\operation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\models\\operation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\models\\operation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\service1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\models\\dbmodeladdidentifier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\models\\dbmodeladdidentifier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\service1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\service1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\models\\dbmodeladdcard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\models\\dbmodeladdcard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\web references\\integrationwebservice\\schedule.datasource||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\web references\\integrationwebservice\\schedule.datasource||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\web references\\integrationwebservice\\accessgroup.datasource||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\web references\\integrationwebservice\\accessgroup.datasource||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\models\\dbmodeladdpeople.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\models\\dbmodeladdpeople.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\service1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\service1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\models\\dbmodeladdorg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\models\\dbmodelrowidindev.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\models\\dbmodelrowidindev.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\services\\databaseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\services\\databaseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\web references\\integrationwebservice\\baseobject.datasource||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\web references\\integrationwebservice\\baseobject.datasource||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\web references\\integrationwebservice\\reference.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\web references\\integrationwebservice\\reference.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\models\\clientstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\models\\clientstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\services\\settingsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\services\\settingsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\services\\continuesessionjob.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\services\\continuesessionjob.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\services\\logger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\services\\logger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\models\\dbmodeladdorg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\models\\dbmodeladdorg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\projectinstaller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\projectinstaller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\projectinstaller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\models\\dbmodelremovepeople.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\models\\dbmodelremovepeople.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\models\\dbmodelremovepeople.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\projectinstaller.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\parsecintegrationclient\\projectinstaller.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|solutionrelative:parsecintegrationclient\\projectinstaller.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB65D712-DC82-49C3-A48D-8F7183FF4AAF}|ParsecIntegrationClient\\ParsecIntegrationClient.csproj|d:\\source\\repos\\ralsoft\\parsecintegrationclinet_service-main\\parsecintegrationclient\\||{B270807C-D8C6-49EB-8EBE-8E8D566637A1}|5e9a8ac2-4f34-4521-858f-4c248ba31532"
     }
   ],
   "DocumentGroupContainers": [
@@ -117,285 +123,288 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "ParsecIntegrationClient",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\ParsecIntegrationClient.csproj",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\ParsecIntegrationClient.csproj",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\ParsecIntegrationClient.csproj",
-              "RelativeToolTip": "ParsecIntegrationClient\\ParsecIntegrationClient.csproj",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-12-20T14:46:49.659Z",
+              "Title": "App.config",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\App.config",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\App.config",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\App.config",
+              "RelativeToolTip": "ParsecIntegrationClient\\App.config",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAA8AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2025-11-28T13:02:06.663Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 9,
+              "Title": "AccessGroup.datasource",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Web References\\IntegrationWebService\\AccessGroup.datasource",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Web References\\IntegrationWebService\\AccessGroup.datasource",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Web References\\IntegrationWebService\\AccessGroup.datasource",
+              "RelativeToolTip": "ParsecIntegrationClient\\Web References\\IntegrationWebService\\AccessGroup.datasource",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001116|",
+              "WhenOpened": "2025-11-27T14:42:01.339Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "Program.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Program.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Program.cs",
               "RelativeDocumentMoniker": "ParsecIntegrationClient\\Program.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Program.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Program.cs",
               "RelativeToolTip": "ParsecIntegrationClient\\Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAvAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAQAAAAaAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-20T14:25:00.658Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-20T14:25:00.658Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
-              "Title": "BaseObject.datasource",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Web References\\IntegrationWebService\\BaseObject.datasource",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Web References\\IntegrationWebService\\BaseObject.datasource",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Web References\\IntegrationWebService\\BaseObject.datasource",
-              "RelativeToolTip": "ParsecIntegrationClient\\Web References\\IntegrationWebService\\BaseObject.datasource",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAaAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001116|",
-              "WhenOpened": "2024-07-04T06:43:14.38Z",
-              "EditorCaption": ""
+              "Title": "DbModelAddCard.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelAddCard.cs",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Models\\DbModelAddCard.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelAddCard.cs",
+              "RelativeToolTip": "ParsecIntegrationClient\\Models\\DbModelAddCard.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAwAAAAWAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2023-08-07T11:45:23.671Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
+              "Title": "Service1.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Service1.cs",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Service1.cs",
+              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Service1.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2023-08-07T11:45:23.664Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "ParsecService.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\ParsecService.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\ParsecService.cs",
               "RelativeDocumentMoniker": "ParsecIntegrationClient\\Services\\ParsecService.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\ParsecService.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\ParsecService.cs",
               "RelativeToolTip": "ParsecIntegrationClient\\Services\\ParsecService.cs",
-              "ViewState": "AQIAAEMAAAAAAAAAAAAawFgAAAAAAAAA",
+              "ViewState": "AQIAAK4AAAAAAAAAAAAqwLwAAAA4AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2023-08-07T11:45:23.373Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "DatabaseService.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\DatabaseService.cs",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Services\\DatabaseService.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\DatabaseService.cs",
-              "RelativeToolTip": "ParsecIntegrationClient\\Services\\DatabaseService.cs",
-              "ViewState": "AQIAAFcAAAAAAAAAAAAmwGcAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-08-07T11:45:23.66Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "ContinueSessionJob.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\ContinueSessionJob.cs",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Services\\ContinueSessionJob.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\ContinueSessionJob.cs",
-              "RelativeToolTip": "ParsecIntegrationClient\\Services\\ContinueSessionJob.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAjAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-08-07T11:45:23.666Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "DbModelAddCard.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelAddCard.cs",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Models\\DbModelAddCard.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelAddCard.cs",
-              "RelativeToolTip": "ParsecIntegrationClient\\Models\\DbModelAddCard.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-08-07T11:45:23.671Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Service1.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Service1.cs",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Service1.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Service1.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
-              "RelativeToolTip": "ParsecIntegrationClient\\Service1.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-08-07T11:45:23.664Z",
-              "EditorCaption": " [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 2,
               "Title": "MainJob.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\MainJob.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\MainJob.cs",
               "RelativeDocumentMoniker": "ParsecIntegrationClient\\Services\\MainJob.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\MainJob.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\MainJob.cs",
               "RelativeToolTip": "ParsecIntegrationClient\\Services\\MainJob.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAhAAAA",
+              "ViewState": "AQIAACsAAAAAAAAAAAASwBkAAAAVAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-08-07T11:45:23.649Z",
-              "EditorCaption": ""
+              "WhenOpened": "2023-08-07T11:45:23.649Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "DbModelRowIDInDev.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelRowIDInDev.cs",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Models\\DbModelRowIDInDev.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelRowIDInDev.cs",
-              "RelativeToolTip": "ParsecIntegrationClient\\Models\\DbModelRowIDInDev.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-08-07T11:45:23.659Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "Logger.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\Logger.cs",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Services\\Logger.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\Logger.cs",
-              "RelativeToolTip": "ParsecIntegrationClient\\Services\\Logger.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-08-07T11:45:23.667Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Reference.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Web References\\IntegrationWebService\\Reference.cs",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Web References\\IntegrationWebService\\Reference.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Web References\\IntegrationWebService\\Reference.cs",
-              "RelativeToolTip": "ParsecIntegrationClient\\Web References\\IntegrationWebService\\Reference.cs",
-              "ViewState": "AQIAAHwrAAAAAAAAAAAiwJgrAAAcAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-08-07T11:45:23.662Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 4,
               "Title": "DbModelAddIdentifier.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelAddIdentifier.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelAddIdentifier.cs",
               "RelativeDocumentMoniker": "ParsecIntegrationClient\\Models\\DbModelAddIdentifier.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelAddIdentifier.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelAddIdentifier.cs",
               "RelativeToolTip": "ParsecIntegrationClient\\Models\\DbModelAddIdentifier.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAoAAAAdAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAIAAAARAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-08-07T11:45:23.66Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "ClientState.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\ClientState.cs",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Models\\ClientState.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\ClientState.cs",
-              "RelativeToolTip": "ParsecIntegrationClient\\Models\\ClientState.cs",
-              "ViewState": "AQIAADMAAAAAAAAAAAAowBEAAAA4AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-04T05:52:31.106Z",
-              "EditorCaption": ""
+              "WhenOpened": "2023-08-07T11:45:23.66Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 8,
-              "Title": "DbModelAddPeople.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelAddPeople.cs",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Models\\DbModelAddPeople.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelAddPeople.cs",
-              "RelativeToolTip": "ParsecIntegrationClient\\Models\\DbModelAddPeople.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAaAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-08-07T11:45:23.658Z",
-              "EditorCaption": ""
+              "Title": "Schedule.datasource",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Web References\\IntegrationWebService\\Schedule.datasource",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Web References\\IntegrationWebService\\Schedule.datasource",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Web References\\IntegrationWebService\\Schedule.datasource",
+              "RelativeToolTip": "ParsecIntegrationClient\\Web References\\IntegrationWebService\\Schedule.datasource",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001116|",
+              "WhenOpened": "2025-11-27T14:42:35.742Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "Service1.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Service1.cs",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Service1.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Service1.cs",
-              "RelativeToolTip": "ParsecIntegrationClient\\Service1.cs",
-              "ViewState": "AQIAADkAAAAAAAAAAAAowEoAAAAAAAAA",
+              "DocumentIndex": 3,
+              "Title": "Operation.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\Operation.cs",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Models\\Operation.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\Operation.cs",
+              "RelativeToolTip": "ParsecIntegrationClient\\Models\\Operation.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAgAAAAQAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-08-07T11:45:23.661Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "SettingsService.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\SettingsService.cs",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Services\\SettingsService.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\SettingsService.cs",
-              "RelativeToolTip": "ParsecIntegrationClient\\Services\\SettingsService.cs",
-              "ViewState": "AQIAACYAAAAAAAAAAAAwwC8AAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-08-07T11:45:23.668Z",
-              "EditorCaption": ""
+              "WhenOpened": "2023-08-07T11:45:23.663Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 18,
-              "Title": "DbModelAddOrg.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelAddOrg.cs",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Models\\DbModelAddOrg.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelAddOrg.cs",
-              "RelativeToolTip": "ParsecIntegrationClient\\Models\\DbModelAddOrg.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAIAAAAGAAAA",
+              "Title": "ContinueSessionJob.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\ContinueSessionJob.cs",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Services\\ContinueSessionJob.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\ContinueSessionJob.cs",
+              "RelativeToolTip": "ParsecIntegrationClient\\Services\\ContinueSessionJob.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAjAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-08-07T11:45:23.656Z",
-              "EditorCaption": ""
+              "WhenOpened": "2023-08-07T11:45:23.666Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "Operation.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\Operation.cs",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Models\\Operation.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\Operation.cs",
-              "RelativeToolTip": "ParsecIntegrationClient\\Models\\Operation.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAAnAAAA",
+              "DocumentIndex": 13,
+              "Title": "DatabaseService.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\DatabaseService.cs",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Services\\DatabaseService.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\DatabaseService.cs",
+              "RelativeToolTip": "ParsecIntegrationClient\\Services\\DatabaseService.cs",
+              "ViewState": "AQIAAFcAAAAAAAAAAAAmwGcAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-08-07T11:45:23.663Z",
-              "EditorCaption": ""
+              "WhenOpened": "2023-08-07T11:45:23.66Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Service1.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Service1.cs",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Service1.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Service1.cs",
+              "RelativeToolTip": "ParsecIntegrationClient\\Service1.cs",
+              "ViewState": "AQIAAA4AAAAAAAAAAAAQwAwAAAAvAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2023-08-07T11:45:23.661Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "DbModelAddPeople.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelAddPeople.cs",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Models\\DbModelAddPeople.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelAddPeople.cs",
+              "RelativeToolTip": "ParsecIntegrationClient\\Models\\DbModelAddPeople.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAaAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2023-08-07T11:45:23.658Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "BaseObject.datasource",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Web References\\IntegrationWebService\\BaseObject.datasource",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Web References\\IntegrationWebService\\BaseObject.datasource",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Web References\\IntegrationWebService\\BaseObject.datasource",
+              "RelativeToolTip": "ParsecIntegrationClient\\Web References\\IntegrationWebService\\BaseObject.datasource",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAaAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001116|",
+              "WhenOpened": "2024-07-04T06:43:14.38Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "DbModelRowIDInDev.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelRowIDInDev.cs",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Models\\DbModelRowIDInDev.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelRowIDInDev.cs",
+              "RelativeToolTip": "ParsecIntegrationClient\\Models\\DbModelRowIDInDev.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2023-08-07T11:45:23.659Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 19,
-              "Title": "ProjectInstaller.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\ProjectInstaller.cs",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\ProjectInstaller.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\ProjectInstaller.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
-              "RelativeToolTip": "ParsecIntegrationClient\\ProjectInstaller.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
+              "Title": "Logger.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\Logger.cs",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Services\\Logger.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\Logger.cs",
+              "RelativeToolTip": "ParsecIntegrationClient\\Services\\Logger.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-08-07T11:45:23.665Z",
-              "EditorCaption": " [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]"
+              "WhenOpened": "2023-08-07T11:45:23.667Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Reference.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Web References\\IntegrationWebService\\Reference.cs",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Web References\\IntegrationWebService\\Reference.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Web References\\IntegrationWebService\\Reference.cs",
+              "RelativeToolTip": "ParsecIntegrationClient\\Web References\\IntegrationWebService\\Reference.cs",
+              "ViewState": "AQIAAHwrAAAAAAAAAAAiwJgrAAAcAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2023-08-07T11:45:23.662Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "ClientState.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\ClientState.cs",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Models\\ClientState.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\ClientState.cs",
+              "RelativeToolTip": "ParsecIntegrationClient\\Models\\ClientState.cs",
+              "ViewState": "AQIAADMAAAAAAAAAAAAowBEAAAA4AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-04T05:52:31.106Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "SettingsService.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\SettingsService.cs",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Services\\SettingsService.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Services\\SettingsService.cs",
+              "RelativeToolTip": "ParsecIntegrationClient\\Services\\SettingsService.cs",
+              "ViewState": "AQIAACYAAAAAAAAAAAAwwC8AAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2023-08-07T11:45:23.668Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 20,
-              "Title": "DbModelRemovePeople.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelRemovePeople.cs",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Models\\DbModelRemovePeople.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelRemovePeople.cs",
-              "RelativeToolTip": "ParsecIntegrationClient\\Models\\DbModelRemovePeople.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Title": "DbModelAddOrg.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelAddOrg.cs",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Models\\DbModelAddOrg.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelAddOrg.cs",
+              "RelativeToolTip": "ParsecIntegrationClient\\Models\\DbModelAddOrg.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAIAAAAGAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-08-07T11:45:23.67Z",
-              "EditorCaption": ""
+              "WhenOpened": "2023-08-07T11:45:23.656Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 21,
-              "Title": "ProjectInstaller.Designer.cs",
-              "DocumentMoniker": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\ProjectInstaller.Designer.cs",
-              "RelativeDocumentMoniker": "ParsecIntegrationClient\\ProjectInstaller.Designer.cs",
-              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\ProjectInstaller.Designer.cs",
-              "RelativeToolTip": "ParsecIntegrationClient\\ProjectInstaller.Designer.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAAIAAAA",
+              "Title": "ProjectInstaller.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\ProjectInstaller.cs",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\ProjectInstaller.cs",
+              "ToolTip": "D:\\source\\repos\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\ProjectInstaller.cs [\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-08-07T11:45:23.672Z",
-              "EditorCaption": ""
+              "WhenOpened": "2023-08-07T11:45:23.665Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "DbModelRemovePeople.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelRemovePeople.cs",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\Models\\DbModelRemovePeople.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\Models\\DbModelRemovePeople.cs",
+              "RelativeToolTip": "ParsecIntegrationClient\\Models\\DbModelRemovePeople.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2023-08-07T11:45:23.67Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "ProjectInstaller.Designer.cs",
+              "DocumentMoniker": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\ProjectInstaller.Designer.cs",
+              "RelativeDocumentMoniker": "ParsecIntegrationClient\\ProjectInstaller.Designer.cs",
+              "ToolTip": "C:\\source\\Ralsoft\\ParsecIntegrationClinet_Service-main\\ParsecIntegrationClient\\ProjectInstaller.Designer.cs",
+              "RelativeToolTip": "ParsecIntegrationClient\\ProjectInstaller.Designer.cs",
+              "ViewState": "AQIAABMAAAAAAAAAAABRwBYAAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2023-08-07T11:45:23.672Z"
             }
           ]
         }
