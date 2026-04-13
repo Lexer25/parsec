@@ -1,0 +1,125 @@
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.exe.config
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.exe.manifest
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.application
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.exe
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.pdb
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\Microsoft.Extensions.Logging.Abstractions.xml
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\Newtonsoft.Json.xml
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\Quartz.xml
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Buffers.xml
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Diagnostics.DiagnosticSource.xml
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Memory.xml
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Numerics.Vectors.xml
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Runtime.CompilerServices.Unsafe.xml
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Threading.Tasks.Extensions.xml
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.AssemblyReference.cache
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.ProjectInstaller.resources
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.GenerateResource.cache
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.CoreCompileInputs.cache
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.exe.manifest
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.application
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIn.CA2AE4BF.Up2Date
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.exe
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.pdb
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.Fody.CopyLocal.cache
+D:\source\repos\Ralsoft\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.Fody.RuntimeCopyLocal.cache
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.exe.config
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.exe.manifest
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.application
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.exe
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.pdb
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\Microsoft.Extensions.Logging.Abstractions.xml
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\Newtonsoft.Json.xml
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\Quartz.xml
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Buffers.xml
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Diagnostics.DiagnosticSource.xml
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Memory.xml
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Numerics.Vectors.xml
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Threading.Tasks.Extensions.xml
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.AssemblyReference.cache
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.ProjectInstaller.resources
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.GenerateResource.cache
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.CoreCompileInputs.cache
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.Fody.CopyLocal.cache
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.Fody.RuntimeCopyLocal.cache
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.exe.manifest
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.application
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIn.CA2AE4BF.Up2Date
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.exe
+C:\Users\ASUS\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.pdb
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.exe.config
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.exe.manifest
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.application
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.exe
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.pdb
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\Microsoft.Extensions.Logging.Abstractions.xml
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\Newtonsoft.Json.xml
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\Quartz.xml
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Buffers.xml
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Diagnostics.DiagnosticSource.xml
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Memory.xml
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Numerics.Vectors.xml
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Runtime.CompilerServices.Unsafe.xml
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Threading.Tasks.Extensions.xml
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.AssemblyReference.cache
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.ProjectInstaller.resources
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.GenerateResource.cache
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.CoreCompileInputs.cache
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.exe.manifest
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.application
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIn.CA2AE4BF.Up2Date
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.exe
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.pdb
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.Fody.CopyLocal.cache
+D:\source\repos\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.Fody.RuntimeCopyLocal.cache
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.exe.config
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.exe.manifest
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.application
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.exe
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.pdb
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\Microsoft.Extensions.Logging.Abstractions.xml
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\Newtonsoft.Json.xml
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\Quartz.xml
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Buffers.xml
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Diagnostics.DiagnosticSource.xml
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Memory.xml
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Numerics.Vectors.xml
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Runtime.CompilerServices.Unsafe.xml
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Threading.Tasks.Extensions.xml
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.AssemblyReference.cache
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.ProjectInstaller.resources
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.GenerateResource.cache
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.CoreCompileInputs.cache
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.Fody.CopyLocal.cache
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.Fody.RuntimeCopyLocal.cache
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.exe.manifest
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.application
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIn.CA2AE4BF.Up2Date
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.exe
+C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.pdb
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.exe.config
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.exe.manifest
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.application
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.exe
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\ParsecIntegrationClient.pdb
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\Microsoft.Extensions.Logging.Abstractions.xml
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\Newtonsoft.Json.xml
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\Quartz.xml
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Buffers.xml
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Diagnostics.DiagnosticSource.xml
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Memory.xml
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Numerics.Vectors.xml
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Runtime.CompilerServices.Unsafe.xml
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Release\System.Threading.Tasks.Extensions.xml
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.AssemblyReference.cache
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.ProjectInstaller.resources
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.GenerateResource.cache
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.CoreCompileInputs.cache
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.Fody.CopyLocal.cache
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.csproj.Fody.RuntimeCopyLocal.cache
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.exe.manifest
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.application
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIn.CA2AE4BF.Up2Date
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.exe
+C:\проекты работа\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\obj\Release\ParsecIntegrationClient.pdb
