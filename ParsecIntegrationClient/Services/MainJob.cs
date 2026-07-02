@@ -19,10 +19,42 @@ namespace ParsecIntegrationClient.Services
         public static void Execute()
         {
             Logger.Log<MainJob>("Warning", "ЗАПУСК ОБРАБОТКИ ЗАДАЧ");
+            var state = new State();
+            // Проверка лицензии перед началом обработки
+            if (!License.CanPerformOperation())
+            {
+                Logger.Log<MainJob>("Error", "ЛИЦЕНЗИЯ ОТСУТСТВУЕТ: Программа заблокирована. Обработка задач прекращена.");
+
+
+                state.Status = "ERR";
+                state.desc = "ЛИЦЕНЗИЯ ОТСУТСТВУЕТ: Превышен лимит бесплатных транзакций";
+                state.ErrorMessage = "Лимит бесплатных транзакций (10) исчерпан";
+                state.Timestamp = DateTime.Now;
+                state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
+                state.keyNum = Key.keyNumber;
+                
+                StateService.SaveState(state);
+
+                Logger.Log<MainJob>("Warning", $"Ожидание {SettingsService.ErrorTimeoutMinutes} минут перед следующей попыткой проверки лицензии");
+                System.Threading.Thread.Sleep(SettingsService.ErrorTimeoutMinutes * 60 * 1000);
+                return;
+            }
 
             var rows = DatabaseService.GetList<DbModelRowIDInDev>(SettingsService.QuerySelectIdDevCardString).OrderBy(x => Convert.ToInt32(x.ID)).ToArray();
+
             if (rows == null || rows.Length == 0)
             {
+                state.ErrorMessage = null;
+                state.desc = "Задачи для обработки отсутствуют";
+                state.Status = null;
+                state.Attempts = null;
+                state.IdCardindev = null;
+                state.Timestamp = DateTime.Now;
+                state.Operation = null;
+                state.OperationCode = null;
+                state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
+                state.keyNum = Key.keyNumber;
+                StateService.SaveState(state);
                 Logger.Log<MainJob>("Warning", "Задач для обработки не найдено");
                 Logger.Log<MainJob>("Warning", $"Ожидание {SettingsService.ErrorTimeoutMinutes} минут перед следующей попыткой");
                 System.Threading.Thread.Sleep(SettingsService.ErrorTimeoutMinutes * 60 * 1000);
@@ -63,16 +95,41 @@ namespace ParsecIntegrationClient.Services
             int i = 1;
             foreach (var row in rows)
             {
-                Logger.Log<MainJob>("Info", $"ЗАДАЧА {i}/{rows.Length} Начало обработки cardindev {row.ID}");
+                // Проверка лицензии перед каждой транзакцией
+                if (!License.CanPerformOperation())
+                {
+                    Logger.Log<MainJob>("Error", $"ЛИЦЕНЗИЯ ОТСУТСТВУЕТ: Превышен лимит. Обработка задачи {row.ID} прекращена.");
+
+                    var errorState = new State
+                    {
+                        IdCardindev = row.ID,
+                        Status = "ERR",
+                        desc = "ЛИЦЕНЗИЯ ОТСУТСТВУЕТ: Превышен лимит бесплатных транзакций",
+                        ErrorMessage = "Лимит бесплатных транзакций исчерпан",
+                        Timestamp = DateTime.Now,
+                        Operation = StateService.GetOperationName(row.OPERATION),
+                        OperationCode = row.OPERATION,
+                        Attempts = row.ATTEMPS,
+                        NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes),
+                        keyNum = Key.keyNumber
+                    };
+                    StateService.SaveState(errorState);
+
+                    // Удаляем задачу, чтобы не зацикливаться
+                    DatabaseService.DeleteIdInDevById(row.ID);
+                    Logger.Log<MainJob>("Warning", $"Задача {row.ID} удалена из-за отсутствия лицензии");
+                    continue; // Продолжаем со следующей задачей
+                }
+
+                Logger.Log<MainJob>("Info", $"ЗАДАЧА {i}/{rows.Length} Начало обработки cardindev {row.ID}. Осталось транзакций: {License.RemainingTransactions}");
 
                 // Предварительные проверки до выполнения операции.
                 int operationPrecheck;
                 if (!int.TryParse(row.OPERATION, out operationPrecheck))
                 {
                     var desc = $"MainJob precheck: некорректный тип операции '{row.OPERATION}' для cardindev={row.ID}";
-                    var errorMessage = $"Ошибка валидации: некорректный код операции '{row.OPERATION}', ожидается число от 1 до 8";
+                    var errorMessage = $"Ошибка валидации: некорректный код операции '{row.OPERATION}', ожидается число от 1 до 10";
                     Logger.Log<MainJob>("Error", desc);
-                    var state = new State();
                     state.desc = desc;
                     state.IdCardindev = row.ID;
                     state.Operation = StateService.GetOperationName(row.OPERATION);
@@ -81,6 +138,7 @@ namespace ParsecIntegrationClient.Services
                     state.ErrorMessage = errorMessage;
                     state.Attempts = row.ATTEMPS;
                     state.Timestamp = DateTime.Now;
+                    state.keyNum = Key.keyNumber;
                     StateService.SaveState(state);
                     Logger.Log<MainJob>("Warning", $"ГЛОБАЛЬНАЯ ОСТАНОВКА Некорректная операция {row.OPERATION} для задачи {row.ID}");
                     return;
@@ -92,7 +150,6 @@ namespace ParsecIntegrationClient.Services
                     var desc = $"MainJob precheck: для операции {operationPrecheck} ожидается GUID в ID_CARD, получено '{row.ID_CARD}' (cardindev={row.ID})";
                     var errorMessage = $"Ошибка валидации: для операции {operationPrecheck} ожидается GUID в поле ID_CARD, получено '{row.ID_CARD}'";
                     Logger.Log<MainJob>("Error", desc);
-                    var state = new State();
                     state.desc = desc;
                     state.IdCardindev = row.ID;
                     state.Operation = StateService.GetOperationName(row.OPERATION);
@@ -101,6 +158,7 @@ namespace ParsecIntegrationClient.Services
                     state.ErrorMessage = errorMessage;
                     state.Attempts = row.ATTEMPS;
                     state.Timestamp = DateTime.Now;
+                    state.keyNum = Key.keyNumber;
                     StateService.SaveState(state);
                     Logger.Log<MainJob>("Warning", $"ГЛОБАЛЬНАЯ ОСТАНОВКА Некорректный GUID в ID_CARD для задачи {row.ID}");
                     return;
@@ -184,11 +242,16 @@ namespace ParsecIntegrationClient.Services
                                 break;
                             }
                         case "9"://Добавление карты человеку
-                            result = ParsecService.AddCardForPeople(row);
-                            break;
-                        case "10":
-                            result = ParsecService.RemoveCardForPeople(row);
-                            break;
+                            {
+                                //result = ParsecService.AddCardForPeople(row);
+                                result = ParsecService.AddCardPeople(row);
+                                break;
+                            }
+                        case "10"://Удаление карты у человека
+                            {
+                                result = ParsecService.RemoveCardPeople(row);
+                                break;
+                            }
                     }
                 }
                 catch (Exception ex)
@@ -198,56 +261,41 @@ namespace ParsecIntegrationClient.Services
                     lastException = ex;
                 }
 
-                //var stateResult = StateService.UpdateStateFromLog(prevLogPosition, logFilePath, row.ID, row.OPERATION);
-
-                
-
-
-
                 Logger.Log<MainJob>("Debug", result.ToString());
-                StateService.SaveState( result );
+                StateService.SaveState(result);
+
                 if (result.Status == "ERR")
                 {
-                    // operationResult = "ERR";
-                    DatabaseService.IncrementAttemp(row);
-                    Logger.Log<MainJob>("Warning", $"212 ГЛОБАЛЬНАЯ ОСТАНОВКА Обработка прекращена: {result.ErrorMessage}");
-                    Logger.Log<MainJob>("Warning", $"213 ГЛОБАЛЬНЫЙ ТАЙМАУТ Следующая попытка через {SettingsService.ErrorTimeoutMinutes} минут");
-                    return;
-                }else if (result.Status == "OK")
-                {
-                    Logger.Log<MainJob>("Info", $"217 операция выполнена успешно УДАЛЕНИЕ ЗАДАЧИ {row.ID}");
-                    DatabaseService.DeleteIdInDevById(row.ID);
-                }else if (result.Status == "SKIP")
-                {
-                    Logger.Log<MainJob>("Info", $"214 команда не реализована");
+                    if (SettingsService.SkipErrCode != null && SettingsService.SkipErrCode.Contains(result.ErrorCode))
+                    {
+                        Logger.Log<MainJob>("Info", $"ErrorCode ({result.ErrorCode}) находится в списке _skipErrCode в appsettings.json. Задача {row.ID} была удалена автоматически.");
+                        DatabaseService.DeleteIdInDevById(row.ID);
+                    }
+                    else
+                    {
+                        DatabaseService.IncrementAttemp(row);
+                        Logger.Log<MainJob>("Warning", $"ГЛОБАЛЬНАЯ ОСТАНОВКА Обработка прекращена: {result.ErrorMessage}");
+                        Logger.Log<MainJob>("Warning", $"ГЛОБАЛЬНЫЙ ТАЙМАУТ Следующая попытка через {SettingsService.ErrorTimeoutMinutes} минут");
+                        return;
+                    }
                 }
+                else if (result.Status == "OK")
+                {
+                    Logger.Log<MainJob>("Info", $"Операция выполнена успешно УДАЛЕНИЕ ЗАДАЧИ {row.ID}");
+                    DatabaseService.DeleteIdInDevById(row.ID);
+                }
+                else if (result.Status == "SKIP")
+                {
+                    Logger.Log<MainJob>("Info", $"Команда не реализована или пропущена");
+                    DatabaseService.DeleteIdInDevById(row.ID);
+                }
+
                 if (result == null)
                 {
-                    Logger.Log<MainJob>("Warning", $"198 ГЛОБАЛЬНАЯ ОСТАНОВКА Обработка прекращена: result is null");
+                    Logger.Log<MainJob>("Warning", $"ГЛОБАЛЬНАЯ ОСТАНОВКА Обработка прекращена: result is null");
                     Logger.Log<MainJob>("Warning", $"ГЛОБАЛЬНЫЙ ТАЙМАУТ Следующая попытка через {SettingsService.ErrorTimeoutMinutes} минут");
                     return;
                 }
-                //if (operation == 3 || operation == 4)
-                //{
-                //    Logger.Log<MainJob>("Warning",
-                //        $"225 ОПЕРАЦИЯ {i}/{rows.Length} cardindev {row.ID} | Операция:{operation} {operationName} " +
-                //        $"| ФИО: {(!string.IsNullOrWhiteSpace(komuName) ? komuName : row.ID_PEP)} | Результат: {result.Status}");
-                //}
-                //else
-                //{
-                //    Logger.Log<MainJob>("Warning",
-                //        $"231 ОПЕРАЦИЯ {i}/{rows.Length} cardindev {row.ID} | Операция:{operation} {operationName} " +
-                //        $"| Кому: {(!string.IsNullOrWhiteSpace(komuName) ? komuName : row.ID_PEP)} " +
-                //        $"| Группа/категория: {(!string.IsNullOrWhiteSpace(accessName) ? accessName : row.ID_CARD)} | Результат: {result.Status}");
-                //}
-
-
-                // Если успешно - удаляем задачу сразу
-                //if (operationResult == "OK")
-                //{
-                //    Logger.Log<MainJob>("Info", $"УДАЛЕНИЕ ЗАДАЧИ {row.ID} - операция выполнена успешно");
-                //    DatabaseService.DeleteIdInDevById(row.ID);
-                //}
 
                 i++;
             }

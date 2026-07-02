@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.IO;
 
 namespace ParsecIntegrationClient.Services
@@ -59,10 +60,18 @@ namespace ParsecIntegrationClient.Services
 
         public static int ErrorTimeoutMinutes = 1;
 
+        public List<int> _skipErrCode
+        {
+            get { return SkipErrCode; }
+            set { SkipErrCode = value; }
+        }
+        public static List<int> SkipErrCode = null;
+
         public static void Update()
         {
             if (!File.Exists($@"{Service1.MainPath}\{fileName}"))
             {
+                // При создании нового файла список будет пустым
                 string json = JsonConvert.SerializeObject(new SettingsService());
                 File.WriteAllText($@"{Service1.MainPath}\{fileName}", json);
             }
@@ -76,6 +85,16 @@ namespace ParsecIntegrationClient.Services
                 DatabaseJobTimeout = settings._databaseJobTimeout;
                 QuerySelectIdDevCardString = settings._querySelectIdDevCardString;
                 ErrorTimeoutMinutes = settings._errorTimeoutMinutes;
+
+                
+                if (settings._skipErrCode != null)
+                {
+                    SkipErrCode = settings._skipErrCode;
+                }
+                else
+                {
+                    SkipErrCode = new List<int>();
+                }
             }
         }
     }

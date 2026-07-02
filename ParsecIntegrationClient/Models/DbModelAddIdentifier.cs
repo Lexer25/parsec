@@ -9,5 +9,6 @@
         public string NAME { get; set; }
         public string PATRONYMIC { get; set; }
         public string SURNAME { get; set; }
+        public string CARDTYPE { get; set; }
     }
 }

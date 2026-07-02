@@ -7,14 +7,14 @@
     <framework targetVersion="4.7.2" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="ParsecIntegrationClient.exe.manifest" size="4167">
+    <dependentAssembly dependencyType="install" codebase="ParsecIntegrationClient.exe.manifest" size="4169">
       <assemblyIdentity name="ParsecIntegrationClient.exe" version="1.0.4.83" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>LSfGGVNJs8302e760rkM0PMf6Q6t+4S31hL3J9sto6U=</dsig:DigestValue>
+        <dsig:DigestValue>Ubhi6TpC98BAL0hXMmToiW/3wPYOkDOtbiFdm0Iavuw=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

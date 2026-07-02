@@ -3,7 +3,7 @@
   <asmv1:assemblyIdentity name="ParsecIntegrationClient.exe" version="1.0.4.83" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="ParsecIntegrationClient" version="1.0.4.3" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="ParsecIntegrationClient" version="1.0.4.6" language="neutral" processorArchitecture="msil" />
     <commandLine file="ParsecIntegrationClient.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -32,7 +32,7 @@
   <dependency>
     <dependentOS>
       <osVersionInfo>
-        <os majorVersion="4" minorVersion="10" buildNumber="0" servicePackMajor="0" />
+        <os majorVersion="5" minorVersion="1" buildNumber="2600" servicePackMajor="0" />
       </osVersionInfo>
     </dependentOS>
   </dependency>
@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ParsecIntegrationClient.exe" size="1472000">
-      <assemblyIdentity name="ParsecIntegrationClient" version="1.0.4.3" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ParsecIntegrationClient.exe" size="1540608">
+      <assemblyIdentity name="ParsecIntegrationClient" version="1.0.4.6" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>AFDNwEJu7NHgpn0Uf/JQabefnQieb7iW/ztpo84YzcQ=</dsig:DigestValue>
+        <dsig:DigestValue>BGGiJO+ItD0QKFTXv+O33hOwJD11m+TKdFvN8s9p3bM=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

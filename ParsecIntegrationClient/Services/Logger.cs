@@ -44,9 +44,9 @@ namespace ParsecIntegrationClient.Services
                 return;
             }
 
-            // Файл (как раньше)
+            // Файл в формате Log_At_год_месяц_число.txt
             File.AppendAllText(
-                $@"{Service1.MainPath}\log\LogAt{now.Day}_{now.Month}_{now.Year}.txt",
+                $@"{Service1.MainPath}\log\Log_At_{now.Year}_{now.Month}_{now.Day}.txt",
                 logMessage);
 
             // Дублирование в консоль (для консольного режима/отладки).

@@ -101,7 +101,22 @@ namespace ParsecIntegrationClient
 
         protected override void OnStop()
         {
-            Logger.Log<Service1>("Warning", "OnStop");
+            Logger.Log<Service1>("Warning", "104 Запрошена остановка службы");
+			
+			try{
+				if (scheduler != null)
+				{
+					Logger.Log<Service1>("Warning","109 Остановка планировщика Quartz...");
+					scheduler.Shutdown(waitForJobsToComplete: true).Wait(TimeSpan.FromSeconds(10));
+					Logger.Log<Service1>("Warning", "111 Планировщик Quartz остановлен успешно");
+				}
+				var stopVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+				Logger.Log<Service1>("Warning",$"114 Служба завершена корректно (версия {stopVersion})");
+			}catch(Exception ex)
+			{
+				Logger.Log<Service1>("Exception", $"117 Ошибка при остановке службы: {ex.Message}");
+				Logger.Log<Service1>("Error", $"118 КРИТИЧЕСКАЯ ОШИБКА при остановке службы: {ex.Message}");
+			}
         }
     }
 }

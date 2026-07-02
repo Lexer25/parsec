@@ -9,7 +9,7 @@ namespace ParsecIntegrationClient.Services
 {
     public class StateService
     {
-        // Дефолтный путь state-файла (как просили — пока фиксируем).
+        // Дефолтный путь state-файла
         public static string DefaultStateFilePath = $@"{Service1.MainPath}\state.json";
 
         // Словарь кодов операций и их названий
@@ -22,7 +22,9 @@ namespace ParsecIntegrationClient.Services
             { "5", "Добавление_организации" },
             { "6", "Удаление_организации" },
             { "7", "Добавление_группы_доступа_карте" },
-            { "8", "Удаление_группы_доступа_у_карты" }
+            { "8", "Удаление_группы_доступа_у_карты" },
+            {"9", "Добавление_карточки" },
+            {"10", "Удаление_карточки" }
         };
 
         /// <summary>

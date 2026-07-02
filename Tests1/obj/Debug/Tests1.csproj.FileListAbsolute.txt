@@ -1,28 +1,3 @@
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ru\Microsoft.TestPlatform.AdapterUtilities.resources.dll
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ru\Microsoft.TestPlatform.CoreUtilities.resources.dll
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ru\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.resources.dll
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ru\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.resources.dll
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ru\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ru\Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Microsoft.TestPlatform.AdapterUtilities.dll
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Tests1.dll
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Tests1.pdb
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.dll
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ParsecIntegrationClient.exe
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Newtonsoft.Json.dll
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ParsecIntegrationClient.pdb
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ParsecIntegrationClient.exe.config
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.xml
-C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml
-C:\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.csproj.AssemblyReference.cache
-C:\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.csproj.CoreCompileInputs.cache
-C:\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.csproj.Up2Date
-C:\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.dll
-C:\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.pdb
 C:\проекты работа\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ru\Microsoft.TestPlatform.AdapterUtilities.resources.dll
 C:\проекты работа\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ru\Microsoft.TestPlatform.CoreUtilities.resources.dll
 C:\проекты работа\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ru\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.resources.dll
@@ -48,3 +23,27 @@ C:\проекты работа\ParsecIntegrationClinet_Service-main\Tests1\obj\D
 C:\проекты работа\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.csproj.Up2Date
 C:\проекты работа\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.dll
 C:\проекты работа\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.pdb
+C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ru\Microsoft.TestPlatform.AdapterUtilities.resources.dll
+C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ru\Microsoft.TestPlatform.CoreUtilities.resources.dll
+C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ru\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.resources.dll
+C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ru\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.resources.dll
+C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ru\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ru\Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll
+C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Microsoft.TestPlatform.AdapterUtilities.dll
+C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Tests1.dll.config
+C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Tests1.dll
+C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Tests1.pdb
+C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\ParsecIntegrationClient.exe.config
+C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.xml
+C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml
+C:\ParsecIntegrationClinet_Service-main\Tests1\bin\Debug\System.Diagnostics.DiagnosticSource.xml
+C:\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.csproj.AssemblyReference.cache
+C:\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.csproj.CoreCompileInputs.cache
+C:\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.csproj.Fody.CopyLocal.cache
+C:\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.csproj.Fody.RuntimeCopyLocal.cache
+C:\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.csproj.Up2Date
+C:\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.dll
+C:\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.pdb
