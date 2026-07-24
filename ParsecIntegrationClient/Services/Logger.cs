@@ -6,6 +6,8 @@ namespace ParsecIntegrationClient.Services
 {
     public class Logger
     {
+        public static string LogLevel { get; set; } = "Warning";
+
         private static int GetLevel(string level)
         {
             var s = (level ?? string.Empty).Trim().ToLowerInvariant();
@@ -23,7 +25,6 @@ namespace ParsecIntegrationClient.Services
                 case "exception":
                     return 3;
                 default:
-                    // Неизвестный уровень считаем информативным.
                     return 0;
             }
         }
@@ -36,23 +37,23 @@ namespace ParsecIntegrationClient.Services
             var logLine = $"{datePoint} LOG: {log}-{typeof(T).Name} Message: {message.PadRight(50)}";
             var logMessage = logLine + Environment.NewLine;
 
-            // Логируем только если уровень вызова >= выбранного минимального уровня.
-            var minLevel = GetLevel(SettingsService.LogLevel);
+            var minLevel = GetLevel(SettingsService.LogLevel ?? "Warning");
             var curLevel = GetLevel(log);
             if (curLevel < minLevel)
             {
                 return;
             }
 
-            // Файл в формате Log_At_год_месяц_число.txt
-            File.AppendAllText(
-                $@"{Service1.MainPath}\log\Log_At_{now.Year}_{now.Month}_{now.Day}.txt",
-                logMessage);
-
-            // Дублирование в консоль (для консольного режима/отладки).
-            // В Windows-сервисе консоль может отсутствовать — тогда просто проглатываем ошибку.
+            // ⬇️ ИЗМЕНЕНО: ServiceConfig.MainPath вместо Service1.MainPath ⬇️
+            var logPath = $@"{ServiceConfig.MainPath}\log\Log_At_{now.Year}_{now.Month}_{now.Day}.txt";
+            
             try
             {
+                var dir = Path.GetDirectoryName(logPath);
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
+                File.AppendAllText(logPath, logMessage);
                 Console.WriteLine(logLine);
             }
             catch

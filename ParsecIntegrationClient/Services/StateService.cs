@@ -10,7 +10,7 @@ namespace ParsecIntegrationClient.Services
     public class StateService
     {
         // Дефолтный путь state-файла
-        public static string DefaultStateFilePath = $@"{Service1.MainPath}\state.json";
+        public  string DefaultStateFilePath = $@"{Service1.MainPath}\state.json";
 
         // Словарь кодов операций и их названий
         public static readonly Dictionary<string, string> OperationNames = new Dictionary<string, string>
@@ -280,6 +280,24 @@ namespace ParsecIntegrationClient.Services
                 Status = status,
                 ErrorMessage = errorMessage ?? string.Empty
             };
+        }
+		
+		        public State LoadState(string stateFilePath = null)
+        {
+            stateFilePath = string.IsNullOrWhiteSpace(stateFilePath) ? DefaultStateFilePath : stateFilePath;
+            
+            try
+            {
+                if (!File.Exists(stateFilePath))
+                    return null;
+
+                var json = File.ReadAllText(stateFilePath);
+                return JsonConvert.DeserializeObject<State>(json);
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }
