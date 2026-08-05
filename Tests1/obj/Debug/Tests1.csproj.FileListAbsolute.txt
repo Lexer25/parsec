@@ -47,3 +47,27 @@ C:\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.csproj.Fody.Runt
 C:\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.csproj.Up2Date
 C:\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.dll
 C:\ParsecIntegrationClinet_Service-main\Tests1\obj\Debug\Tests1.pdb
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\bin\Debug\ru\Microsoft.TestPlatform.AdapterUtilities.resources.dll
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\bin\Debug\ru\Microsoft.TestPlatform.CoreUtilities.resources.dll
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\bin\Debug\ru\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.resources.dll
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\bin\Debug\ru\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.resources.dll
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\bin\Debug\ru\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\bin\Debug\ru\Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\bin\Debug\Microsoft.TestPlatform.AdapterUtilities.dll
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\bin\Debug\Tests1.dll.config
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\bin\Debug\Tests1.dll
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\bin\Debug\Tests1.pdb
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\bin\Debug\ParsecIntegrationClient.exe.config
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.xml
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\bin\Debug\System.Diagnostics.DiagnosticSource.xml
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\obj\Debug\Tests1.csproj.AssemblyReference.cache
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\obj\Debug\Tests1.csproj.CoreCompileInputs.cache
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\obj\Debug\Tests1.csproj.Fody.CopyLocal.cache
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\obj\Debug\Tests1.csproj.Fody.RuntimeCopyLocal.cache
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\obj\Debug\Tests1.csproj.Up2Date
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\obj\Debug\Tests1.dll
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\Tests1\obj\Debug\Tests1.pdb

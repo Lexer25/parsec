@@ -67,3 +67,28 @@ C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Debug\System
 C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Debug\System.Threading.Tasks.Extensions.dll
 C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Debug\Costura.pdb
 C:\ParsecIntegrationClinet_Service-main\ParsecIntegrationClient\bin\Debug\Costura.xml
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\bin\Debug\ParsecIntegrationClient.exe.config
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\bin\Debug\ParsecIntegrationClient.exe.manifest
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\bin\Debug\ParsecIntegrationClient.application
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\bin\Debug\ParsecIntegrationClient.exe
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\bin\Debug\ParsecIntegrationClient.pdb
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\bin\Debug\Microsoft.Extensions.Logging.Abstractions.xml
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\bin\Debug\Newtonsoft.Json.xml
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\bin\Debug\Quartz.xml
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\bin\Debug\System.Buffers.xml
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\bin\Debug\System.Diagnostics.DiagnosticSource.xml
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\bin\Debug\System.Memory.xml
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\bin\Debug\System.Numerics.Vectors.xml
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\bin\Debug\System.Threading.Tasks.Extensions.xml
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.csproj.AssemblyReference.cache
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.ProjectInstaller.resources
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.csproj.GenerateResource.cache
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.csproj.CoreCompileInputs.cache
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.exe.manifest
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.application
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\obj\Debug\ParsecIn.CA2AE4BF.Up2Date
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.exe
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.pdb
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.csproj.Fody.CopyLocal.cache
+D:\Мурашов 2026\ParsecIntegrationClient\parsec\ParsecIntegrationClient\obj\Debug\ParsecIntegrationClient.csproj.Fody.RuntimeCopyLocal.cache

@@ -124,7 +124,431 @@ namespace ParsecIntegrationClient.Services
         }
 
 
+        /// <summary>
+        /// Главный метод-координатор для добавления идентификатора сотруднику
+        /// </summary>
         public static State AddIdentifierPeople(DbModelRowIDInDev row)
+        {
+            Logger.Log<ParsecService>("Info", $"Start AddIdentifierPeople {row.ID}");
+
+            try
+            {
+                // 1. Получение данных из БД
+                var model = GetIdentifierModel(row);
+                if (model == null)
+                {
+                    return CreateErrorState(row, "Модель данных не найдена", 1);
+                }
+
+                // 2. Проверка типа карты
+                if (int.Parse(model.CARDTYPE) != 1)
+                {
+                    return CreateErrorState(row,
+                        $"Интегратор не обрабатывает идентификаторы с типом {model.CARDTYPE}", 3);
+                }
+
+                // 3. Валидация модели
+                var validationState = ValidateModel(model, row);
+                if (validationState != null)
+                {
+                    return validationState;
+                }
+
+                // 4. Основная бизнес-логика
+                return ProcessIdentifierAddition(row, model);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log<ParsecService>("Error", $"Critical error in AddIdentifierPeople: {ex.Message}");
+                DatabaseService.IncrementAttemp(row);
+                return CreateErrorState(row, $"Критическая ошибка: {ex.Message}", 9);
+            }
+        }
+
+        /// <summary>
+        /// Получение модели идентификатора из базы данных
+        /// </summary>
+        private static DbModelAddIdentifier GetIdentifierModel(DbModelRowIDInDev row)
+        {
+            var query = "select c.id_card, an.guid, p.guid as people_guid, " +
+            "p.tabnum, p.name, p.patronymic, p.surname, c.id_cardtype from card c, " +
+            "accessname an join people p on p.id_pep = c.id_pep " +
+            $"where c.id_pep = {row.ID_PEP} " +
+            $"and an.id_accessname = {row.ID_CARD}";
+
+            var parameters = new { idPep = row.ID_PEP, idCard = row.ID_CARD };
+
+            Logger.Log<ParsecService>("Info", $"Executing query for model with ID_PEP={row.ID_PEP}, ID_CARD={row.ID_CARD}");
+
+            try
+            {
+                var model = DatabaseService.Get<DbModelAddIdentifier>(query);
+                Logger.Log<ParsecService>("Info", $"Model retrieved: {JsonConvert.SerializeObject(model)}");
+                return model;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log<ParsecService>("Error", $"Failed to get model: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Валидация модели перед обработкой
+        /// </summary>
+        private static State ValidateModel(DbModelAddIdentifier model, DbModelRowIDInDev row)
+        {
+            var integServ = new IntegrationService();
+
+            // 1. Проверка наличия номера карты
+            if (string.IsNullOrEmpty(model.CODE))
+            {
+                var errorMsg = $"Отсутствует номер карты (CODE=null) для контакта ID={row.ID_PEP}";
+                return CreateErrorState(row, errorMsg, 4);
+            }
+
+            // 2. Проверка GUID сотрудника в Артонит
+            if (string.IsNullOrEmpty(model.GUID_PEP))
+            {
+                var errorMsg = $"Поле GUID_PEP не заполнено для сотрудника {model.SURNAME} {model.NAME}";
+                return CreateErrorState(row, errorMsg, 5);
+            }
+
+            // 3. Проверка наличия сотрудника в Parsec
+            if (!CheckGuidePresent(new Guid(model.GUID_PEP)))
+            {
+                var errorMsg = $"Сотрудник не синхронизирован в Parsec (GUID_PEP: {model.GUID_PEP})";
+                return CreateErrorState(row, errorMsg, 5);
+            }
+
+            // 4. Проверка GUID группы доступа в Артонит
+            if (string.IsNullOrEmpty(model.GUID_ACCESS_GROUP))
+            {
+                var errorMsg = $"Поле GUID_ACCESS_GROUP не заполнено для группы доступа";
+                return CreateErrorState(row, errorMsg, 5);
+            }
+
+            // 5. Проверка наличия группы доступа в Parsec
+            var accessGroupGuid = new Guid(model.GUID_ACCESS_GROUP);
+            if (!CheckGuidePresent(accessGroupGuid))
+            {
+                var accessName = GetAccessGroupName(int.Parse(row.ID_CARD));
+                var errorMsg = $"Группа доступа не синхронизирована в Parsec (GUID: {model.GUID_ACCESS_GROUP})";
+                return CreateErrorState(row, errorMsg, 6);
+            }
+
+            return null; // Валидация пройдена
+        }
+
+        /// <summary>
+        /// Основная логика добавления идентификатора
+        /// </summary>
+        private static State ProcessIdentifierAddition(DbModelRowIDInDev row, DbModelAddIdentifier model)
+        {
+            var integServ = new IntegrationService();
+            var accessGroupGuid = new Guid(model.GUID_ACCESS_GROUP);
+            var hexValue = Convert.ToInt64(model.CODE).ToString("X8");
+            var accessName = GetAccessGroupName(int.Parse(row.ID_CARD));
+
+            // 1. Получение сотрудника из Parsec
+            var person = integServ.GetPerson(ClientState.SessionID, new Guid(model.GUID_PEP));
+            if (person == null)
+            {
+                Logger.Log<ParsecService>("Warning", $"Пользователь с GUID: {model.GUID_PEP} не найден в Parsec");
+                return CreateSuccessState(row, "Пользователь не найден в Parsec, задача удалена");
+            }
+
+            // 2. Открытие сессии редактирования
+            var sessionResult = integServ.OpenPersonEditingSession(ClientState.SessionID, person.ID);
+            if (sessionResult.Result != ClientState.Result_Success)
+            {
+                var errorMsg = $"Ошибка открытия сессии редактирования: {sessionResult.ErrorMessage}";
+                Logger.Log<ParsecService>("Error", errorMsg);
+                return CreateErrorState(row, errorMsg, 7);
+            }
+
+            var editSessionID = sessionResult.Value;
+
+            try
+            {
+                // 3. Получение существующих идентификаторов
+                var identifiers = integServ.GetPersonIdentifiers(ClientState.SessionID, new Guid(model.GUID_PEP));
+                var existingIdentifier = identifiers?.FirstOrDefault(x => x.CODE == hexValue);
+
+                // 4. Создание или обновление идентификатора
+                var creatingItem = BuildIdentifier(model, hexValue, accessGroupGuid, existingIdentifier, integServ);
+
+                // 5. Логирование операции
+                LogIdentifierAddition(model, hexValue, accessName, existingIdentifier);
+
+                // 6. Добавление идентификатора
+                var addResult = integServ.AddPersonIdentifier(editSessionID, creatingItem);
+                if (addResult.Result != ClientState.Result_Success)
+                {
+                    var errorMsg = $"Ошибка добавления идентификатора: {addResult.ErrorMessage}";
+                    Logger.Log<ParsecService>("Error", errorMsg);
+                    return CreateErrorState(row, errorMsg, 2);
+                }
+
+                // 7. Успешное завершение
+                Logger.Log<ParsecService>("Info",
+                    $"Идентификатор успешно добавлен | Сотрудник: {person.FIRST_NAME} {person.LAST_NAME} | Карта: {hexValue}");
+
+                return CreateSuccessState(row, "Операция выполнена успешно");
+            }
+            finally
+            {
+                // 8. Гарантированное закрытие сессии
+                try
+                {
+                    integServ.ClosePersonEditingSession(editSessionID); // Только один параметр - Guid
+                    Logger.Log<ParsecService>("Info", $"Сессия редактирования {editSessionID} закрыта");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log<ParsecService>("Warning", $"Ошибка при закрытии сессии: {ex.Message}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Создание объекта идентификатора для добавления
+        /// </summary>
+        private static Identifier BuildIdentifier(
+            DbModelAddIdentifier model,
+            string hexValue,
+            Guid accessGroupGuid,
+            Identifier existingIdentifier,
+            IntegrationService integServ)
+        {
+            var creatingItem = new Identifier
+            {
+                PERSON_ID = new Guid(model.GUID_PEP),
+                CODE = hexValue,
+                IS_PRIMARY = true,
+                NAME = "",
+                PRIVILEGE_MASK = 0,
+                IDENTIFTYPE = 0
+            };
+
+            // Если идентификатор уже существует и у него есть группа доступа
+            if (existingIdentifier != null && existingIdentifier.ACCGROUP_ID != Guid.Empty)
+            {
+                Logger.Log<ParsecService>("Info",
+                    $"У карты {hexValue} уже есть группа доступа {existingIdentifier.ACCGROUP_ID}. " +
+                    "Формируем inherited-цепочку");
+
+                // Получаем цепочку наследования
+                var inheritedChain = GetInheritedAccessGroupsChain(
+                    existingIdentifier.ACCGROUP_ID,
+                    accessGroupGuid,
+                    integServ);
+
+                // Получаем или создаем группу доступа с этой цепочкой
+                creatingItem.ACCGROUP_ID = GetOrCreateAccessGroupWithInheritance(inheritedChain, integServ);
+            }
+            else
+            {
+                // Просто назначаем целевую группу доступа
+                creatingItem.ACCGROUP_ID = accessGroupGuid;
+                Logger.Log<ParsecService>("Info", $"Назначаем группу доступа {accessGroupGuid} для карты {hexValue}");
+            }
+
+            return creatingItem;
+        }
+
+        /// <summary>
+        /// Получение цепочки наследования групп доступа
+        /// </summary>
+        private static List<Guid> GetInheritedAccessGroupsChain(
+            Guid currentGroupId,
+            Guid targetGroupId,
+            IntegrationService integServ)
+        {
+            // Получаем существующую цепочку наследования
+            var inheritedGroups = integServ.GetInheritedAccessGroups(ClientState.SessionID, currentGroupId)?.ToList()
+                                  ?? new List<Guid>();
+
+            // Если цепочка пуста, добавляем текущую группу как базовую
+            if (!inheritedGroups.Any())
+            {
+                inheritedGroups.Add(currentGroupId);
+                Logger.Log<ParsecService>("Info", $"Цепочка наследования пуста, добавляем базовую группу {currentGroupId}");
+            }
+
+            // Добавляем целевую группу
+            inheritedGroups.Add(targetGroupId);
+
+            // Удаляем дубликаты
+            var distinctChain = inheritedGroups.Distinct().ToList();
+
+            Logger.Log<ParsecService>("Info",
+                $"Сформирована цепочка наследования из {distinctChain.Count} групп: " +
+                string.Join(" -> ", distinctChain));
+
+            return distinctChain;
+        }
+
+        /// <summary>
+        /// Получение или создание группы доступа с указанной цепочкой наследования
+        /// </summary>
+        private static Guid GetOrCreateAccessGroupWithInheritance(
+            List<Guid> inheritedChain,
+            IntegrationService integServ)
+        {
+            // 1. Проверяем, существует ли уже группа с такой цепочкой
+            var existingGroupId = CheckAccessGroups(inheritedChain); //
+            if (existingGroupId != Guid.Empty)
+            {
+                Logger.Log<ParsecService>("Info", $"Найдена существующая группа доступа {existingGroupId} с нужной цепочкой");
+                return existingGroupId;
+            }
+
+            // 2. Создаем новую группу доступа
+            var groupName = BuildAccessGroupName(inheritedChain, integServ);
+            var schedules = integServ.GetAccessSchedules(ClientState.SessionID);
+            var scheduleId = schedules?.FirstOrDefault()?.ID ?? Guid.Empty;
+
+            Logger.Log<ParsecService>("Info", $"Создаем новую группу доступа '{groupName}' с расписанием {scheduleId}");
+
+            var createResult = integServ.CreateAccessGroup(
+                ClientState.SessionID,
+                groupName,
+                scheduleId,
+                null);
+
+            if (createResult.Result != ClientState.Result_Success)
+            {
+                throw new InvalidOperationException($"Не удалось создать группу доступа: {createResult.ErrorMessage}");
+            }
+
+            var newGroupId = createResult.Value;
+
+            // 3. Устанавливаем цепочку наследования
+            integServ.SetInheritedAccessGroups(ClientState.SessionID, newGroupId, inheritedChain.ToArray());
+
+            Logger.Log<ParsecService>("Info", $"Создана группа доступа {newGroupId} с цепочкой наследования");
+
+            return newGroupId;
+        }
+
+        /// <summary>
+        /// Формирование имени группы доступа на основе цепочки наследования
+        /// </summary>
+        private static string BuildAccessGroupName(List<Guid> inheritedChain, IntegrationService integServ)
+        {
+            var names = new List<string>();
+
+            foreach (var groupId in inheritedChain)
+            {
+                var group = GetAccessGroups(groupId);
+                if (group != null && !string.IsNullOrEmpty(group.NAME))
+                {
+                    names.Add(group.NAME);
+                }
+            }
+
+            var name = names.Any() ? string.Join(" + ", names) : "(Особая) Artsec";
+
+            // Ограничиваем длину имени, если необходимо
+            if (name.Length > 255)
+            {
+                name = name.Substring(0, 252) + "...";
+            }
+
+            return name;
+        }
+
+        /// <summary>
+        /// Получение имени группы доступа по ID
+        /// </summary>
+        private static string GetAccessGroupName(int accessNameId)
+        {
+            try
+            {
+                return DatabaseService.GetString($"SELECT name FROM accessname WHERE id_accessname = {accessNameId}")
+                       ?? $"Группа {accessNameId}";
+            }
+            catch (Exception ex)
+            {
+                Logger.Log<ParsecService>("Warning", $"Не удалось получить имя группы {accessNameId}: {ex.Message}");
+                return $"Группа {accessNameId}";
+            }
+        }
+
+        /// <summary>
+        /// Логирование операции добавления идентификатора
+        /// </summary>
+        private static void LogIdentifierAddition(
+            DbModelAddIdentifier model,
+            string hexValue,
+            string accessName,
+            Identifier existingIdentifier)
+        {
+            var logMessage = new StringBuilder();
+            logMessage.AppendLine($"Добавление идентификатора:");
+            logMessage.AppendLine($"  - Сотрудник: {model.SURNAME} {model.NAME} {model.PATRONYMIC}");
+            logMessage.AppendLine($"  - Табельный номер: {model.TAB_NUM_PEP}");
+            logMessage.AppendLine($"  - Карта: {hexValue} (dec: {Convert.ToInt64(model.CODE)})");
+            logMessage.AppendLine($"  - Группа доступа: {accessName}");
+            logMessage.AppendLine($"  - GUID_PEP: {model.GUID_PEP}");
+
+            if (existingIdentifier != null)
+            {
+                logMessage.AppendLine($"  - Существующая группа: {existingIdentifier.ACCGROUP_ID}");
+            }
+
+            Logger.Log<ParsecService>("Info", logMessage.ToString());
+        }
+
+        /// <summary>
+        /// Создание State с ошибкой
+        /// </summary>
+        private static State CreateErrorState(DbModelRowIDInDev row, string errorMessage, int errorCode)
+        {
+            var state = CreateBaseState(row);
+            state.Status = "ERR";
+            state.ErrorMessage = errorMessage?.Replace("\r\n", " ") ?? errorMessage;
+            state.ErrorCode = errorCode;
+            state.desc = $"КОД ОШИБКИ: {errorCode}. {errorMessage}";
+            state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
+
+            Logger.Log<ParsecService>("Error", $"State создан с ошибкой {errorCode}: {errorMessage}");
+            return state;
+        }
+
+        /// <summary>
+        /// Создание State с успешным статусом
+        /// </summary>
+        private static State CreateSuccessState(DbModelRowIDInDev row, string description)
+        {
+            var state = CreateBaseState(row);
+            state.Status = "OK";
+            state.desc = description;
+            state.ErrorMessage = null;
+            state.ErrorCode = 0;
+            state.NextStart = null;
+
+            return state;
+        }
+
+        /// <summary>
+        /// Создание базового State с общими полями
+        /// </summary>
+        private static State CreateBaseState(DbModelRowIDInDev row)
+        {
+            return new State
+            {
+                IdCardindev = row.ID,
+                Operation = StateService.GetOperationName(row.OPERATION),
+                OperationCode = row.OPERATION,
+                Attempts = row.ATTEMPS,
+                Timestamp = DateTime.Now,
+                keyNum = Key.keyNumber
+            };
+        }
+
+        public static State _AddIdentifierPeople(DbModelRowIDInDev row)
         {
             var state = new State();
             Logger.Log<ParsecService>("Warning", $"62 Start AddIdentifierPeople {row.ID}");
@@ -165,30 +589,6 @@ namespace ParsecIntegrationClient.Services
                 }
 
 
-
-                /* Модель с данными
-                    {
-                     "CODE":"20312031",
-                     "GUID_ACCESS_GROUP":"468130d7-d27a-4cd6-9fce-cc6f9a6d94fd",
-                     "GUID_PEP":"441dc23b-1111-44d2-a999-11920FF02806",
-                     "TAB_NUM_PEP":"tn_11920",
-                     "NAME":"",
-                     "PATRONYMIC":"",
-                     "SURNAME":"2031"
-                     }*/
-
-                /*  а вот пустая модель
-                 *  { 
-                     "CODE":null,
-                      "GUID_ACCESS_GROUP":null,
-                      "GUID_PEP":null,
-                      "TAB_NUM_PEP":null,
-                      "NAME":null,
-                      "PATRONYMIC":null,
-                      "SURNAME":null
-                  }*/
-
-                // { Newtonsoft.Json.JsonConvert.SerializeObject(person)}
 
                 //далее работаю с моделью
 
@@ -448,64 +848,7 @@ namespace ParsecIntegrationClient.Services
                             {
                                 Logger.Log<ParsecService>("Warning", $"291 у карты {identifier.CODE} уже была категории доступа identifier.ACCGROUP_ID --> {identifier.ACCGROUP_ID}");
                                 Logger.Log<ParsecService>("Warning", $"292 Формирую промежуточную иерархию категорий доступа");
-                                /* return;
-                                 var arrayInheritedAccessGroups = integServ.GetInheritedAccessGroups(ClientState.SessionID, identifier.ACCGROUP_ID);
-                                 var inheritedAccessGroups = arrayInheritedAccessGroups.ToList();
-
-                                 if (inheritedAccessGroups.Count == 0)
-                                     inheritedAccessGroups.Add(identifier.ACCGROUP_ID);
-
-
-                                 inheritedAccessGroups.Add(accesGroup.ID);
-
-                                 Logger.Log<ParsecService>("Warning", $"169 Добавлена новая группа доступа {inheritedAccessGroups.Count}");
-
-                                 var resCheckAccessGroups = CheckAccessGroups(inheritedAccessGroups);
-
-                                 Logger.Log<ParsecService>("Info", $"173 Результат поиска группы доступа с такими же вложенными группами доступа " +
-                                     $"{resCheckAccessGroups}");
-
-
-                                 if (resCheckAccessGroups != Guid.Empty)
-                                 {
-                                     creatingItem = new Identifier()
-                                     {
-                                         ACCGROUP_ID = resCheckAccessGroups,
-                                         IS_PRIMARY = true,
-                                         CODE = hexValue,
-                                     };
-                                 }
-                                 else
-                                 {
-                                     var schedules = integServ.GetAccessSchedules(ClientState.SessionID);
-
-
-                                     var newNameAccessGroup = string.Empty;
-
-                                     inheritedAccessGroups.ForEach(x => {
-                                         newNameAccessGroup += $"{GetAccessGroups(x).NAME} ";
-                                     });
-
-                                     var resCreateAccessGroup = integServ.CreateAccessGroup(ClientState.SessionID,
-                                         newNameAccessGroup, schedules[0].ID, null);
-
-                                     if (resCreateAccessGroup.Result != ClientState.Result_Success)
-                                     {
-                                         Console.WriteLine(resCreateAccessGroup.ErrorMessage);
-                                         return;
-                                     }
-
-                                     var rGuid = resCreateAccessGroup.Value;
-
-                                     var resInerited = integServ.SetInheritedAccessGroups(ClientState.SessionID, rGuid, inheritedAccessGroups.ToArray());
-
-                                     creatingItem = new Identifier()
-                                     {
-                                         ACCGROUP_ID = rGuid,
-                                         IS_PRIMARY = true,
-                                         CODE = hexValue,
-                                     };
-                                 }*/
+                               
 
                                 // Формируем промежуточную inherited-цепочку: (old inherited chain) + (target group)
                                 var arrayInheritedAccessGroups = integServ.GetInheritedAccessGroups(ClientState.SessionID, identifier.ACCGROUP_ID);

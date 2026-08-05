@@ -3,7 +3,7 @@
   <asmv1:assemblyIdentity name="ParsecIntegrationClient.exe" version="1.0.4.83" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="ParsecIntegrationClient" version="1.0.4.6" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="ParsecIntegrationClient" version="1.0.4.7" language="neutral" processorArchitecture="msil" />
     <commandLine file="ParsecIntegrationClient.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ParsecIntegrationClient.exe" size="1540608">
-      <assemblyIdentity name="ParsecIntegrationClient" version="1.0.4.6" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ParsecIntegrationClient.exe" size="1549824">
+      <assemblyIdentity name="ParsecIntegrationClient" version="1.0.4.7" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>BGGiJO+ItD0QKFTXv+O33hOwJD11m+TKdFvN8s9p3bM=</dsig:DigestValue>
+        <dsig:DigestValue>vrgR+DFNz7eN6zWABEfAbMsIIAN8YSR0b+RY2ADdots=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -62,13 +62,13 @@
       <dsig:DigestValue>R5Si2LbVAHVldJ7Mtn2vG1O1kQJ5OzcWJgVW72bZCDI=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Web References\IntegrationWebService\IntegrationService.disco" size="870">
+  <file name="Web References\IntegrationWebService\IntegrationService.disco" size="875">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>WBNfs2RLz72/mJIzEhdYdcIwOcD9sIyTfxPdP35WUJc=</dsig:DigestValue>
+      <dsig:DigestValue>Q25b/dcqDglVu9u4+IfCfG4QuvvmA+tYFUcMPXUR2Ak=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>

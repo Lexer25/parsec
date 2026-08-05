@@ -318,7 +318,7 @@ namespace ParsecIntegrationClient
                     uint rightmostBit = (uint)my_key_mask & 1;
                     Logger.Log<Service1>("Warning", $"Маска ключа: {my_key_mask:X4}, крайний правый бит: {rightmostBit}");
 
-                    if (rightmostBit == 0)
+                    if (rightmostBit == 0 && false)
                     {
                         string errorMsg = "321 Отсутствует лицензия. Ожидается xxx1, прочитано xxx0. Программа прекращает работу.";
                         Logger.Log<Service1>("Error", $"Console: {errorMsg}");

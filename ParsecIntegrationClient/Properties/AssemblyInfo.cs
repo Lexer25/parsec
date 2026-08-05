@@ -33,5 +33,5 @@ using System.Runtime.InteropServices;
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
 //22/03/2026 строки из кардиндев не удаляются.
-[assembly: AssemblyVersion("1.0.4.6")]
-[assembly: AssemblyFileVersion("1.0.4.6")]
+[assembly: AssemblyVersion("1.0.4.7")]
+[assembly: AssemblyFileVersion("1.0.4.7")]

@@ -29,7 +29,8 @@ namespace ParsecIntegrationClient.Models
         [JsonProperty("attempts")]
         public string Attempts { get; set; }
         [JsonProperty("nextStart")]
-        public DateTime NextStart { get; set; }
+        //public DateTime NextStart { get; set; }
+        public DateTime? NextStart { get; set; }
         [JsonProperty("ErrorCode")]
         public int ErrorCode { get; set; }
         [JsonProperty("keyNumber")]
