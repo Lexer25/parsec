@@ -63,6 +63,35 @@ namespace ParsecIntegrationClient.Services
             }
         }
 
+
+
+
+        //поиск указанной категориии доступа в полученнм списке всех категорий доступа
+        /* public static AccessGroup GetAccessGroups(Guid idGroup)
+         {
+             var integServ = new IntegrationService();
+             var accesGroups = integServ.GetAccessGroups(ClientState.SessionID).ToList();
+             foreach (var item in accesGroups)
+                 if (item.ID.Equals(idGroup))
+                     return item;
+
+             return null;
+         }
+
+         public static void RefreshOrgUnitsHierarhy()
+         {
+             try
+             {
+                 var integServ = new IntegrationService();
+                 var ouHierarhy = integServ.GetOrgUnitsHierarhy(ClientState.SessionID);
+                 ClientState.SetOrgUnitHierarhy(ouHierarhy);
+             }
+             catch (Exception ex)
+             {
+                 Console.WriteLine(ex.Message);
+             }
+         }*/
+
         public static AccessGroup GetAccessGroups(Guid idGroup)
         {
             try
@@ -97,6 +126,9 @@ namespace ParsecIntegrationClient.Services
         /// <summary>
         /// Главный метод-координатор для добавления идентификатора сотруднику
         /// </summary>
+        /// <summary>
+        /// Главный метод-координатор для добавления идентификатора сотруднику
+        /// </summary>
         public static State AddIdentifierPeople(DbModelRowIDInDev row)
         {
             Logger.Log<ParsecService>("Info", $"Start AddIdentifierPeople {row.ID}");
@@ -128,9 +160,10 @@ namespace ParsecIntegrationClient.Services
                 {
                     index++;
 
-                    Logger.Log<ParsecService>("Info", $"Processing model {index}/{models.Count}: Card={model.CODE}");
+                    // Используем правильное имя свойства ID_CARD
+                    Logger.Log<ParsecService>("Info", $"Processing model {index}/{models.Count}: Card={model.ID_CARD}");
 
-                    // Проверка типа карты
+                    // Проверка типа карты (используем CARDTYPE)
                     if (!int.TryParse(model.CARDTYPE, out int cardType) || cardType != 1)
                     {
                         errorCount++;
@@ -221,10 +254,226 @@ namespace ParsecIntegrationClient.Services
         }
 
         /// <summary>
+        /// Валидация модели
+        /// </summary>
+        private static State ValidateModel(DbModelAddIdentifier model, DbModelRowIDInDev row)
+        {
+            // Используем правильные имена свойств
+            if (string.IsNullOrEmpty(model.GUID_PEP))
+            {
+                var errorMsg = $"Поле GUID_PEP не заполнено для сотрудника {model.SURNAME} {model.NAME}";
+                return CreateErrorState(row, errorMsg, 5);
+            }
+
+            if (string.IsNullOrEmpty(model.GUID_ACCESS_GROUP))
+            {
+                var errorMsg = $"Поле GUID_ACCESS_GROUP не заполнено для группы доступа";
+                return CreateErrorState(row, errorMsg, 5);
+            }
+
+            // Проверка наличия GUID в Parsec
+            if (!CheckGuidePresent(new Guid(model.GUID_PEP)))
+            {
+                var errorMsg = $"Сотрудник не синхронизирован в Parsec (GUID_PEP: {model.GUID_PEP})";
+                return CreateErrorState(row, errorMsg, 5);
+            }
+
+            var accessGroupGuid = new Guid(model.GUID_ACCESS_GROUP);
+            if (!CheckGuidePresent(accessGroupGuid))
+            {
+                var errorMsg = $"Группа доступа не синхронизирована в Parsec (GUID: {model.GUID_ACCESS_GROUP})";
+                return CreateErrorState(row, errorMsg, 6);
+            }
+
+            return null; // Валидация пройдена
+        }
+
+        /// <summary>
+        /// Основная логика добавления идентификатора
+        /// </summary>
+        private static State ProcessIdentifierAddition(DbModelRowIDInDev row, DbModelAddIdentifier model)
+        {
+            var integServ = new IntegrationService();
+            var accessGroupGuid = new Guid(model.GUID_ACCESS_GROUP);
+            var hexValue = Convert.ToInt64(model.CODE).ToString("X8");
+            var accessName = GetAccessGroupName(row.ID_CARD);
+
+            // 1. Получение сотрудника из Parsec
+            var person = integServ.GetPerson(ClientState.SessionID, new Guid(model.GUID_PEP));
+            if (person == null)
+            {
+                Logger.Log<ParsecService>("Warning", $"Пользователь с GUID: {model.GUID_PEP} не найден в Parsec");
+                return CreateSuccessState(row, "Пользователь не найден в Parsec, задача удалена");
+            }
+
+            // 2. Открытие сессии редактирования
+            var sessionResult = integServ.OpenPersonEditingSession(ClientState.SessionID, person.ID);
+            if (sessionResult.Result != ClientState.Result_Success)
+            {
+                var errorMsg = $"Ошибка открытия сессии редактирования: {sessionResult.ErrorMessage}";
+                Logger.Log<ParsecService>("Error", errorMsg);
+                return CreateErrorState(row, errorMsg, 7);
+            }
+
+            var editSessionID = sessionResult.Value;
+
+            try
+            {
+                // 3. Получение существующих идентификаторов
+                var identifiers = integServ.GetPersonIdentifiers(ClientState.SessionID, new Guid(model.GUID_PEP));
+                var existingIdentifier = identifiers?.FirstOrDefault(x => x.CODE == hexValue);
+
+                // 4. Создание или обновление идентификатора
+                var creatingItem = BuildIdentifier(model, hexValue, accessGroupGuid, existingIdentifier, integServ);
+
+                // 5. Логирование операции
+                LogIdentifierAddition(model, hexValue, accessName, existingIdentifier);
+
+                // 6. Добавление идентификатора
+                var addResult = integServ.AddPersonIdentifier(editSessionID, creatingItem);
+                if (addResult.Result != ClientState.Result_Success)
+                {
+                    var errorMsg = $"Ошибка добавления идентификатора: {addResult.ErrorMessage}";
+                    Logger.Log<ParsecService>("Error", errorMsg);
+                    return CreateErrorState(row, errorMsg, 2);
+                }
+
+                // 7. Успешное завершение
+                Logger.Log<ParsecService>("Info",
+                    $"Идентификатор успешно добавлен | Сотрудник: {person.FIRST_NAME} {person.LAST_NAME} | Карта: {hexValue}");
+
+                return CreateSuccessState(row, "Операция выполнена успешно");
+            }
+            finally
+            {
+                // 8. Гарантированное закрытие сессии
+                try
+                {
+                    integServ.ClosePersonEditingSession(editSessionID);
+                    Logger.Log<ParsecService>("Info", $"Сессия редактирования {editSessionID} закрыта");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log<ParsecService>("Warning", $"Ошибка при закрытии сессии: {ex.Message}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Формирование SQL-запроса для получения моделей идентификаторов
+        /// </summary>
+        private static string BuildIdentifierQuery(DbModelRowIDInDev row)
+        {
+            var query = "select c.id_card, an.guid, p.guid as people_guid, " +
+                        "p.tabnum, p.name, p.patronymic, p.surname, c.id_cardtype " +
+                        "from card c, " +
+                        "accessname an join people p on p.id_pep = c.id_pep " +
+                        $"where c.id_pep = {row.ID_PEP} " +
+                        $"and an.id_accessname = {row.ID_CARD}";
+
+            Logger.Log<ParsecService>("Info", $"Executing query for models with ID_PEP={row.ID_PEP}, ID_CARD={row.ID_CARD}");
+            Logger.Log<ParsecService>("Debug", $"Query: {query}");
+
+            return query;
+        }
+
+        /// <summary>
+        /// Создание State с частичным успехом
+        /// </summary>
+        private static State CreatePartialSuccessState(DbModelRowIDInDev row, string description)
+        {
+            var state = CreateBaseState(row);
+            state.Status = "WARN";
+            state.desc = description;
+            state.ErrorMessage = description;
+            state.ErrorCode = 0;
+            state.NextStart = DateTime.Now;
+
+            Logger.Log<ParsecService>("Warning", $"Partial success: {description}");
+            return state;
+        }
+
+
+
+
+        /// <summary>
+        /// Маппинг строки DataReader в модель
+        /// </summary>
+        private static DbModelAddIdentifier MapToModel(IDataReader reader)
+        {
+            return new DbModelAddIdentifier
+            {
+                ID_CARD = reader["id_card"]?.ToString(),
+                GUID_ACCESS_GROUP = reader["guid"]?.ToString(),
+                GUID_PEP = reader["people_guid"]?.ToString(),
+                TAB_NUM_PEP = reader["tabnum"]?.ToString(),
+                NAME = reader["name"]?.ToString(),
+                PATRONYMIC = reader["patronymic"]?.ToString(),
+                SURNAME = reader["surname"]?.ToString(),
+                CARDTYPE = reader["id_cardtype"]?.ToString()
+            };
+        }
+
+        /// <summary>
+        /// Обработка одной модели
+        /// </summary>
+        private static State ProcessSingleModel(DbModelRowIDInDev row, DbModelAddIdentifier model)
+        {
+            Logger.Log<ParsecService>("Debug", $"Processing model: {JsonConvert.SerializeObject(model)}");
+
+            // 1. Проверка типа карты
+            if (!int.TryParse(model.CARDTYPE, out int cardType) || cardType != 1)
+            {
+                var errorMsg = $"Интегратор не обрабатывает идентификаторы с типом {model.CARDTYPE}";
+                Logger.Log<ParsecService>("Warning", errorMsg);
+                return CreateErrorState(row, errorMsg, 3);
+            }
+
+            // 2. Валидация модели
+            var validationState = ValidateModel(model, row);
+            if (validationState != null)
+            {
+                return validationState;
+            }
+
+            // 3. Основная бизнес-логика
+            return ProcessIdentifierAddition(row, model);
+        }
+
+        /// <summary>
+        /// Получение модели идентификатора из базы данных
+        /// </summary>
+        private static DbModelAddIdentifier GetIdentifierModel(DbModelRowIDInDev row)
+        {
+            var query = "select c.id_card, an.guid, p.guid as people_guid, " +
+            "p.tabnum, p.name, p.patronymic, p.surname, c.id_cardtype from card c, " +
+            "accessname an join people p on p.id_pep = c.id_pep " +
+            $"where c.id_pep = {row.ID_PEP} " +
+            $"and an.id_accessname = {row.ID_CARD}";
+
+         
+            Logger.Log<ParsecService>("Info", $"Executing query for model with ID_PEP={row.ID_PEP}, ID_CARD={row.ID_CARD}");
+
+            try
+            {
+                var model = DatabaseService.Get<DbModelAddIdentifier>(query);
+                Logger.Log<ParsecService>("Info", $"Model retrieved: {JsonConvert.SerializeObject(model)}");
+                return model;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log<ParsecService>("Error", $"Failed to get model: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Валидация модели перед обработкой
         /// </summary>
         private static State ValidateModel(DbModelAddIdentifier model, DbModelRowIDInDev row)
         {
+            var integServ = new IntegrationService();
+
             // 1. Проверка наличия номера карты
             if (string.IsNullOrEmpty(model.CODE))
             {
@@ -257,6 +506,7 @@ namespace ParsecIntegrationClient.Services
             var accessGroupGuid = new Guid(model.GUID_ACCESS_GROUP);
             if (!CheckGuidePresent(accessGroupGuid))
             {
+                var accessName = GetAccessGroupName(int.Parse(row.ID_CARD));
                 var errorMsg = $"Группа доступа не синхронизирована в Parsec (GUID: {model.GUID_ACCESS_GROUP})";
                 return CreateErrorState(row, errorMsg, 6);
             }
@@ -325,7 +575,7 @@ namespace ParsecIntegrationClient.Services
                 // 8. Гарантированное закрытие сессии
                 try
                 {
-                    integServ.ClosePersonEditingSession(editSessionID);
+                    integServ.ClosePersonEditingSession(editSessionID); // Только один параметр - Guid
                     Logger.Log<ParsecService>("Info", $"Сессия редактирования {editSessionID} закрыта");
                 }
                 catch (Exception ex)
@@ -333,22 +583,6 @@ namespace ParsecIntegrationClient.Services
                     Logger.Log<ParsecService>("Warning", $"Ошибка при закрытии сессии: {ex.Message}");
                 }
             }
-        }
-
-        /// <summary>
-        /// Создание State с частичным успехом
-        /// </summary>
-        private static State CreatePartialSuccessState(DbModelRowIDInDev row, string description)
-        {
-            var state = CreateBaseState(row);
-            state.Status = "WARN";
-            state.desc = description;
-            state.ErrorMessage = description;
-            state.ErrorCode = 0;
-            state.NextStart = DateTime.Now;
-
-            Logger.Log<ParsecService>("Warning", $"Partial success: {description}");
-            return state;
         }
 
         /// <summary>
@@ -437,7 +671,7 @@ namespace ParsecIntegrationClient.Services
             IntegrationService integServ)
         {
             // 1. Проверяем, существует ли уже группа с такой цепочкой
-            var existingGroupId = CheckAccessGroups(inheritedChain);
+            var existingGroupId = CheckAccessGroups(inheritedChain); //
             if (existingGroupId != Guid.Empty)
             {
                 Logger.Log<ParsecService>("Info", $"Найдена существующая группа доступа {existingGroupId} с нужной цепочкой");
@@ -567,7 +801,7 @@ namespace ParsecIntegrationClient.Services
             state.desc = description;
             state.ErrorMessage = null;
             state.ErrorCode = 0;
-            state.NextStart = DateTime.Now;
+            state.NextStart = null;
 
             return state;
         }
@@ -588,12 +822,8 @@ namespace ParsecIntegrationClient.Services
             };
         }
 
-        // ==================== ОСТАЛЬНЫЕ МЕТОДЫ (без изменений) ====================
-
         public static State _AddIdentifierPeople(DbModelRowIDInDev row)
         {
-            // Оставляем как есть для обратной совместимости
-            // или удаляем, если не используется
             var state = new State();
             Logger.Log<ParsecService>("Warning", $"62 Start AddIdentifierPeople {row.ID}");
             try
@@ -614,7 +844,9 @@ namespace ParsecIntegrationClient.Services
                 if (int.Parse(model.CARDTYPE) != 1)
                 {
                     var desc = $"142 КОД ОШИБКИ: {state.ErrorCode} Интегратор не обрабатывает идентификаторы с {model.CARDTYPE}. Обработка прерывается";
+                    //addDisc(desc);
                     Logger.Log<ParsecService>("Error", desc);
+                    //var state = new State();
                     state.desc = desc;
                     state.Status = "ERR";
                     state.ErrorMessage = desc;
@@ -630,6 +862,11 @@ namespace ParsecIntegrationClient.Services
                     return state;
                 }
 
+
+
+                //далее работаю с моделью
+
+                // Получаем название группы доступа для логов
                 string accessName = DatabaseService.GetString(
                     $"select an.name from accessname an where an.id_accessname = {row.ID_CARD}");
 
@@ -640,6 +877,7 @@ namespace ParsecIntegrationClient.Services
                     var desc = $"77 КОД: {state.ErrorCode}. SQL нет номера карты в Артонит. Добавление категории доступа прервано.";
                     var errorMessage = $"Ошибка БД: отсутствует номер карты (CODE=null) для контакта ID={row.ID_PEP}";
                     Logger.Log<ParsecService>("Info", desc);
+                    //var state = new State();
                     state.desc = desc;
                     state.IdCardindev = row.ID;
                     state.Operation = StateService.GetOperationName(row.OPERATION);
@@ -650,12 +888,16 @@ namespace ParsecIntegrationClient.Services
                     state.Timestamp = DateTime.Now;
                     state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                     state.keyNum = Key.keyNumber;
+                    //StateService.SaveState(state);
+                    //Logger.Log<ParsecService>("Info", $"78 Удаляю задачу с номером {row.ID}");
+                    //DatabaseService.DeleteIdInDevById(row.ID);
                     Logger.Log<ParsecService>("Warning", $"188 Stop AddIdentifierPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                     return state;
                 }
 
                 try
                 {
+                    //есть ли model.GUID_PEP в базе данных СКУД? Если нет, то завершить программу.
                     if (model.GUID_PEP == null || model.GUID_PEP == String.Empty)
                     {
                         state.ErrorCode = 5;
@@ -672,15 +914,20 @@ namespace ParsecIntegrationClient.Services
                         state.Timestamp = DateTime.Now;
                         state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                         state.keyNum = Key.keyNumber;
+
+                        //StateService.SaveState(state);
+                        //DatabaseService.IncrementAttemp(row);
                         Logger.Log<ParsecService>("Warning", $"211 Stop AddIdentifierPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                         return state;
                     }
+                    //есть ли model.GUID_PEP в Парсек? если нет, то выход из программы.
                     if (!CheckGuidePresent(new Guid(model.GUID_PEP)))
                     {
                         state.ErrorCode = 5;
                         var desc = $"КОД {state.ErrorCode}Добавление категории | Сотрудник: {model.SURNAME} {model.NAME} {model.PATRONYMIC} | Группа: {accessName} | Ошибка: сотрудник не найден в Парсек (GUID_PEP: {model.GUID_PEP})";
                         var errorMessage = $"Ошибка: сотрудник не синхронизирован в Parsec (GUID_PEP: {model.GUID_PEP})";
                         Logger.Log<ParsecService>("Warning", desc);
+                        // var state = new State();
                         state.desc = desc;
                         state.IdCardindev = row.ID;
                         state.Operation = StateService.GetOperationName(row.OPERATION);
@@ -691,16 +938,20 @@ namespace ParsecIntegrationClient.Services
                         state.Timestamp = DateTime.Now;
                         state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                         state.keyNum = Key.keyNumber;
+                        //StateService.SaveState(state);
+                        //DatabaseService.IncrementAttemp(row);
                         Logger.Log<ParsecService>("Warning", $"230 Stop AddIdentifierPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                         return state;
                     }
 
+                    //есть ли model.GUID_ACCESS_GROUP в базе данных СКУД Артонит? Если нет, то завершить программу.               
                     if (model.GUID_ACCESS_GROUP == null || model.GUID_ACCESS_GROUP == String.Empty)
                     {
                         state.ErrorCode = 5;
                         var desc = $"Добавление категории | Сотрудник: {model.SURNAME} {model.NAME} {model.PATRONYMIC} | Группа: {accessName} | Ошибка: группа доступа не найдена в Артонит (GUID_ACCESS_GROUP пустой)";
                         var errorMessage = $"Ошибка БД: поле GUID_ACCESS_GROUP не заполнено для группы доступа {accessName}";
                         Logger.Log<ParsecService>("Warning", desc);
+                        //var state = new State();
                         state.desc = desc;
                         state.IdCardindev = row.ID;
                         state.Operation = StateService.GetOperationName(row.OPERATION);
@@ -711,6 +962,8 @@ namespace ParsecIntegrationClient.Services
                         state.Timestamp = DateTime.Now;
                         state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                         state.keyNum = Key.keyNumber;
+                        //StateService.SaveState(state);
+                        //DatabaseService.IncrementAttemp(row);
                         Logger.Log<ParsecService>("Warning", $"252 Stop AddIdentifierPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                         return state;
                     }
@@ -745,17 +998,25 @@ namespace ParsecIntegrationClient.Services
                         state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                         state.ErrorCode = 6;
                         state.keyNum = Key.keyNumber;
+                        //StateService.SaveState(state);
+                        //DatabaseService.IncrementAttemp(row);
                         Logger.Log<ParsecService>("Warning", $"285 Stop AddIdentifierPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                         return state;
                     }
 
+                    //проверка пройдены успешно. начаню анализ.
+
                     long cardDec = Convert.ToInt64(model.CODE);
                     string hexValue = cardDec.ToString("X8");
+                    // accessName уже получен выше
 
+                    //проверяю наличие пользователя с указанным GUID_PEP
                     var person = integServ.GetPerson(ClientState.SessionID, new Guid(model.GUID_PEP));
 
                     if (person != null)
                     {
+
+                        //получаю GUID сессии для работы
                         var res = integServ.OpenPersonEditingSession(ClientState.SessionID, person.ID);
 
                         if (res.Result != ClientState.Result_Success)
@@ -774,10 +1035,13 @@ namespace ParsecIntegrationClient.Services
                             state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                             state.ErrorCode = 7;
                             state.keyNum = Key.keyNumber;
+                            //StateService.SaveState(state);
+                            //DatabaseService.IncrementAttemp(row);
                             return state;
                         }
 
                         var _editSessionID = res.Value;
+                        //проверк: есть ли model.GUID_ACCESS_GROUP в списке категорий доступа?
                         Logger.Log<ParsecService>("Warning", $"130 Вызываю метод GetAccessGroups с параметром model.GUID_ACCESS_GROUP  GUID: {model.GUID_ACCESS_GROUP}");
 
                         var accesGroup = GetAccessGroups(new Guid(model.GUID_ACCESS_GROUP));
@@ -798,31 +1062,45 @@ namespace ParsecIntegrationClient.Services
                             state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                             state.ErrorCode = 6;
                             state.keyNum = Key.keyNumber;
+                            //StateService.SaveState(state);
+                            //DatabaseService.IncrementAttemp(row);
                             return state;
                         }
 
+                        // Логируем с названием группы доступа (не с id).
                         Logger.Log<ParsecService>("Warning", $"107 Добавление группы доступа пользователю |" +
                            $"Группа доступа: {accesGroup.NAME} | карта: hex {hexValue} (dec: {cardDec}) | GUID_PEP = {model.GUID_PEP} " +
                            $"| tab_num = {model.TAB_NUM_PEP} " +
                            $"| ФИО (artsec): {model.SURNAME} {model.NAME} {model.PATRONYMIC}");
 
+
                         Logger.Log<ParsecService>("Warning", $"137 вызываю метод GetPersonIdentifiers : {ClientState.SessionID} | GUID: {model.GUID_PEP} | new Guid {new Guid(model.GUID_PEP)}");
 
+                        //получаю список идентификаторов, уже выданных пользователю
                         var identifiers = integServ.GetPersonIdentifiers(ClientState.SessionID, new Guid(model.GUID_PEP));
                         Logger.Log<ParsecService>("Warning", $"140 контрольная точка после вызова метода GetPersonIdentifiers : {ClientState.SessionID} | GUID: {model.GUID_PEP} | new Guid {new Guid(model.GUID_PEP)}");
 
+                        // ДОБАВИТЬ ПРОВЕРКУ НА NULL
+
                         var identifier = null as Identifier;
-                        if (identifiers == null)
+                        if (identifiers == null)//нет идентификаторов для пипла.
                         {
                             Logger.Log<ParsecService>("Warning", $"208 GetPersonIdentifiers вернул null для пользователя с GUID: {model.GUID_PEP}");
                             DatabaseService.IncrementAttemp(row);
+                            //return;
+
                         }
                         else
                         {
                             identifier = identifiers.FirstOrDefault(x => x.CODE == hexValue);
+
                             Logger.Log<ParsecService>("Warning", $"216 Идентификатор с кодом:  {hexValue} | {identifier.CODE} действительно имеется у пользователя.");
+
+
                         }
 
+
+                        //сбор данных для метода AddPersonIdentifier
                         var creatingItem = new Identifier();
                         creatingItem.PERSON_ID = new Guid(model.GUID_PEP);
                         creatingItem.NAME = "";
@@ -831,33 +1109,41 @@ namespace ParsecIntegrationClient.Services
                         {
                             Logger.Log<ParsecService>("Warning", $"148 карте {identifier.CODE} присвоена категория доступа identifier.ACCGROUP_ID --> {identifier.ACCGROUP_ID}");
 
-                            if (identifier.ACCGROUP_ID == Guid.Empty)
+                            if (identifier.ACCGROUP_ID == Guid.Empty)//если присвоенная категория доступа пустая, то нужно присвоить устанавливаемую категорию доступа.
                             {
                                 Logger.Log<ParsecService>("Warning", $"223 у карты {identifier.CODE} категории доступа не было, поэтому присваиваю identifier.ACCGROUP_ID --> {model.GUID_ACCESS_GROUP}");
+                                //  if (!Guid.Empty.Equals(accesGroup.ID))
                                 creatingItem.ACCGROUP_ID = new Guid(model.GUID_ACCESS_GROUP);
+
                                 creatingItem.IS_PRIMARY = true;
                                 creatingItem.CODE = hexValue;
                             }
-                            else
+                            else //а вот если НЕ пустая, то надо формировать промежуточную категорию доступа
                             {
                                 Logger.Log<ParsecService>("Warning", $"291 у карты {identifier.CODE} уже была категории доступа identifier.ACCGROUP_ID --> {identifier.ACCGROUP_ID}");
                                 Logger.Log<ParsecService>("Warning", $"292 Формирую промежуточную иерархию категорий доступа");
+                               
 
+                                // Формируем промежуточную inherited-цепочку: (old inherited chain) + (target group)
                                 var arrayInheritedAccessGroups = integServ.GetInheritedAccessGroups(ClientState.SessionID, identifier.ACCGROUP_ID);
                                 var inheritedAccessGroups = (arrayInheritedAccessGroups == null
                                     ? new List<Guid>()
                                     : arrayInheritedAccessGroups.ToList());
 
+                                // Если система вернула пустой список, считаем, что "база" - это текущая группа identifier.ACCGROUP_ID
                                 if (inheritedAccessGroups.Count == 0)
                                     inheritedAccessGroups.Add(identifier.ACCGROUP_ID);
 
+                                // Добавляем целевую группу (из модели) в inherited-цепочку.
                                 if (accesGroup != null && accesGroup.ID != Guid.Empty)
                                     inheritedAccessGroups.Add(accesGroup.ID);
 
+                                // Dedup на случай повторов (и чтобы CheckAccessGroups работал стабильно)
                                 inheritedAccessGroups = inheritedAccessGroups.Distinct().ToList();
 
                                 Logger.Log<ParsecService>("Warning", $"169 Добавлена новая группа доступа {inheritedAccessGroups.Count}");
 
+                                // Ищем уже существующую access-группу с такой же inherited-иерархией
                                 var resCheckAccessGroups = CheckAccessGroups(inheritedAccessGroups);
 
                                 Logger.Log<ParsecService>("Warning", $"173 Результат поиска группы доступа с такими же вложенными группами доступа {resCheckAccessGroups}");
@@ -868,6 +1154,7 @@ namespace ParsecIntegrationClient.Services
                                 }
                                 else
                                 {
+                                    // Создаём новую access-группу и задаём ей inherited-цепочку
                                     var schedules = integServ.GetAccessSchedules(ClientState.SessionID);
 
                                     var newNameAccessGroup = string.Empty;
@@ -902,6 +1189,8 @@ namespace ParsecIntegrationClient.Services
                                         state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                                         state.ErrorCode = 8;
                                         state.keyNum = Key.keyNumber;
+                                        //StateService.SaveState(state);
+                                        //DatabaseService.IncrementAttemp(row);
                                         return state;
                                     }
 
@@ -910,6 +1199,7 @@ namespace ParsecIntegrationClient.Services
                                     creatingItem.ACCGROUP_ID = rGuid;
                                 }
 
+                                // Важно: после формирования inherited-цепочки обязательно задаём параметры идентификатора
                                 creatingItem.IS_PRIMARY = true;
                                 creatingItem.CODE = hexValue;
                             }
@@ -922,6 +1212,13 @@ namespace ParsecIntegrationClient.Services
                             creatingItem.IS_PRIMARY = true;
                             creatingItem.CODE = hexValue;
                         }
+                        //ACCGROUP_ID
+                        //PRIVILEGE_MASK
+                        //IDENTIFTYPE
+                        //NAME
+                        //CODE
+                        //PERSON_ID
+                        //IS_PRIMARY
 
                         Logger.Log<ParsecService>("Error", $"246 вызывад метод AddPersonIdentifier с параметрами: " +
                             $"ACCGROUP_ID = {creatingItem.ACCGROUP_ID}" +
@@ -950,6 +1247,8 @@ namespace ParsecIntegrationClient.Services
                             state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                             state.ErrorCode = 2;
                             state.keyNum = Key.keyNumber;
+                            //StateService.SaveState(state);
+                            //DatabaseService.IncrementAttemp(row);
                             return state;
                         }
 
@@ -965,6 +1264,8 @@ namespace ParsecIntegrationClient.Services
                         state.Attempts = row.ATTEMPS;
                         state.Timestamp = DateTime.Now;
                         state.keyNum = Key.keyNumber;
+                        //StateService.SaveState(state);
+                        //DatabaseService.DeleteIdInDevById(row.ID);
                         return state;
                     }
                     else
@@ -972,6 +1273,7 @@ namespace ParsecIntegrationClient.Services
 
                     }
                     {
+                        //DatabaseService.IncrementAttemp(row);
                         state.desc = "Пользователь не найден в parsec, задача удалена";
                         state.IdCardindev = row.ID;
                         state.Operation = StateService.GetOperationName(row.OPERATION);
@@ -980,6 +1282,8 @@ namespace ParsecIntegrationClient.Services
                         state.Attempts = row.ATTEMPS;
                         state.Timestamp = DateTime.Now;
                         state.keyNum = Key.keyNumber;
+                        //StateService.SaveState(state2);
+                        //DatabaseService.DeleteIdInDevById(row.ID);
                         Logger.Log<ParsecService>("Warning", $"248 Пользователь с GUID: {model.GUID_PEP} не найден в parsec. Задача {row.ID} удалена");
                         return state;
                     }
@@ -1000,6 +1304,7 @@ namespace ParsecIntegrationClient.Services
                     state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                     state.ErrorCode = 9;
                     state.keyNum = Key.keyNumber;
+                    // StateService.SaveState(state);
                     return state;
                 }
 
@@ -1020,10 +1325,10 @@ namespace ParsecIntegrationClient.Services
                 state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                 state.ErrorCode = 9;
                 state.keyNum = Key.keyNumber;
+                //StateService.SaveState(state);
                 return state;
             }
         }
-
         //Удаление идентификатора
         public static State RemoveIdentifierPeople(DbModelRowIDInDev row)
         {
@@ -1041,6 +1346,8 @@ namespace ParsecIntegrationClient.Services
             addDisc("type=RemoveIdentifierPeople");
             addDisc($"cardindev={row.ID}");
             addDisc($"operation={row.OPERATION}");
+            /* try
+             {*/
             var integServ = new IntegrationService();
 
             var query = "select c.id_card, an.guid, p.guid as people_guid, " +
@@ -1048,6 +1355,9 @@ namespace ParsecIntegrationClient.Services
                  "accessname an join people p on p.id_pep = c.id_pep " +
                  $"where c.id_pep = {row.ID_PEP}" +
                  $"and an.id_accessname = {row.ID_CARD}";
+            //addDisc("before_model_query");
+
+
 
             var model = DatabaseService.Get<DbModelAddIdentifier>(query);
 
@@ -1071,6 +1381,7 @@ namespace ParsecIntegrationClient.Services
                 return state;
             }
 
+
             if (model == null)
             {
                 var desc = "Контакт не найден в базе данных СКУД";
@@ -1088,6 +1399,9 @@ namespace ParsecIntegrationClient.Services
                 state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                 state.ErrorCode = 10;
                 state.keyNum = Key.keyNumber;
+                //StateService.SaveState(state);
+                //DatabaseService.IncrementAttemp(row);
+                //throw new Exception(desc);
                 Logger.Log<ParsecService>("Warning", $"701 Stop RemoveIdentifierPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                 return state;
             }
@@ -1109,6 +1423,9 @@ namespace ParsecIntegrationClient.Services
                 state.ErrorCode = 4;
                 state.keyNum = Key.keyNumber;
                 Logger.Log<ParsecService>("Warning", $"701 Stop RemoveIdentifierPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+                //StateService.SaveState(state);
+                //DatabaseService.IncrementAttemp(row);
+                //throw new Exception(desc);
                 return state;
             }
 
@@ -1130,8 +1447,12 @@ namespace ParsecIntegrationClient.Services
                 state.ErrorCode = 11;
                 state.keyNum = Key.keyNumber;
                 Logger.Log<ParsecService>("Warning", $"701 Stop RemoveIdentifierPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+                //StateService.SaveState(state);
+                //DatabaseService.IncrementAttemp(row);
+                //throw new Exception(desc);
                 return state;
             }
+
 
             string hexValue = Convert.ToInt64(model.CODE).ToString("X8");
             addDisc($"model_ok_guidPep={model.GUID_PEP}");
@@ -1140,11 +1461,14 @@ namespace ParsecIntegrationClient.Services
             Logger.Log<ParsecService>("Warning",
                $"299 Удаление идентификатора | {model.CODE} ({hexValue})");
 
+
             var person = integServ.GetPerson(ClientState.SessionID, new Guid(model.GUID_PEP));
             addDisc("after_get_person");
 
+
             if (person == null)
             {
+
                 var desc = $"590 RemoveIdentifierPeople: человека {model.SURNAME} {model.NAME} {model.PATRONYMIC} нет в базе данных Парсек";
                 var errorMessage = $"Ошибка Parsec: пользователь с GUID {model.GUID_PEP} ({model.SURNAME} {model.NAME} {model.PATRONYMIC}) не найден в базе данных";
                 state.desc = desc;
@@ -1158,11 +1482,15 @@ namespace ParsecIntegrationClient.Services
                 state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                 state.ErrorCode = 12;
                 state.keyNum = Key.keyNumber;
+                // Отладочное логирование - посмотрим что реально в state
                 Logger.Log<ParsecService>("Error", $"DEBUG: state.desc = '{state.desc}'");
                 Logger.Log<ParsecService>("Error", $"DEBUG: state.ErrorMessage = '{state.ErrorMessage}'");
                 Logger.Log<ParsecService>("Error", $"DEBUG: state.ToString() = {state.ToString()}");
+
                 addDisc(desc);
                 Logger.Log<ParsecService>("Error", state.ToString());
+                //StateService.SaveState(state);
+                //DatabaseService.IncrementAttemp(row);
                 Logger.Log<ParsecService>("Warning", $"701 Stop RemoveIdentifierPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                 return state;
             }
@@ -1185,6 +1513,8 @@ namespace ParsecIntegrationClient.Services
                 state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                 state.ErrorCode = 7;
                 state.keyNum = Key.keyNumber;
+                //StateService.SaveState(state);
+                //DatabaseService.IncrementAttemp(row);
                 Logger.Log<ParsecService>("Warning", $"701 Stop RemoveIdentifierPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                 return state;
             }
@@ -1192,9 +1522,12 @@ namespace ParsecIntegrationClient.Services
             var _editSessionID = res.Value;
             addDisc("editing_session_opened");
 
+
+
             var identifiers = integServ.GetPersonIdentifiers(ClientState.SessionID, new Guid(model.GUID_PEP));
             addDisc("after_get_identifiers");
 
+            // Логируем все идентификаторы для отладки
             if (identifiers != null)
             {
                 for (int i = 0; i < identifiers.Length; i++)
@@ -1221,10 +1554,14 @@ namespace ParsecIntegrationClient.Services
                 state.ErrorCode = 13;
                 state.keyNum = Key.keyNumber;
                 Logger.Log<ParsecService>("Warning", $"701 Stop RemoveIdentifierPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+                //StateService.SaveState(state);
+                //DatabaseService.IncrementAttemp(row);
+                //throw new Exception(desc);
                 return state;
             }
 
             Logger.Log<ParsecService>("Warning", $"327 Получены идентификаторы у человека в количестве {identifiers.Length}");
+
 
             var identifier = identifiers.FirstOrDefault(x => x.CODE == hexValue);
 
@@ -1246,6 +1583,9 @@ namespace ParsecIntegrationClient.Services
                 state.ErrorCode = 14;
                 state.keyNum = Key.keyNumber;
                 Logger.Log<ParsecService>("Warning", $"701 Stop RemoveIdentifierPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+                //StateService.SaveState(state);
+                //DatabaseService.IncrementAttemp(row);
+                //throw new Exception(desc);
                 return state;
             }
 
@@ -1257,6 +1597,7 @@ namespace ParsecIntegrationClient.Services
             Logger.Log<ParsecService>("Info", $"484 RemoveeIdentifiersPeople identifier: {Newtonsoft.Json.JsonConvert.SerializeObject(identifier)}");
             Logger.Log<ParsecService>("Info", $"486 ACCGROUP_ID перед вызовом GetInheritedAccessGroups: {identifier.ACCGROUP_ID}");
 
+            // Проверяем, есть ли у идентификатора группа доступа
             if (identifier.ACCGROUP_ID == Guid.Empty || identifier.ACCGROUP_ID.ToString() == "00000000-0000-0000-0000-000000000000")
             {
                 var desc = $"412 У идентификатора {hexValue} нет привязанной группы доступа (ACCGROUP_ID пустой)";
@@ -1272,15 +1613,18 @@ namespace ParsecIntegrationClient.Services
                 stateSkip.Timestamp = DateTime.Now;
                 stateSkip.ErrorCode = 15;
                 state.keyNum = Key.keyNumber;
-                return stateSkip;
+                //StateService.SaveState(stateSkip);
+                //DatabaseService.DeleteIdInDevById(row.ID);
+                return stateSkip; // Это не ошибка, просто пропускаем
             }
 
             var arrayInheritedAccessGroups = integServ.GetInheritedAccessGroups(ClientState.SessionID, identifier.ACCGROUP_ID);
 
             Logger.Log<ParsecService>("Info", $"487 RemoveeIdentifiersPeople: {Newtonsoft.Json.JsonConvert.SerializeObject(arrayInheritedAccessGroups)}");
-
+            //23.03.2026
             try
             {
+
                 if (arrayInheritedAccessGroups == null)
                 {
                     var desc = $"RemoveIdentifierPeople: база данных вернула пустоту для ACCGROUP_ID={identifier.ACCGROUP_ID}";
@@ -1299,6 +1643,9 @@ namespace ParsecIntegrationClient.Services
                     state.ErrorCode = 16;
                     state.keyNum = Key.keyNumber;
                     Logger.Log<ParsecService>("Warning", $"701 Stop RemoveIdentifierPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+                    //StateService.SaveState(state);
+                    //DatabaseService.IncrementAttemp(row);
+                    //throw new Exception(desc);
                     return state;
                 }
 
@@ -1306,6 +1653,7 @@ namespace ParsecIntegrationClient.Services
 
                 Logger.Log<ParsecService>("Info", $"492 RemoveeIdentifiersPeople: {Newtonsoft.Json.JsonConvert.SerializeObject(inheritedAccessGroups)}");
 
+                // Проверяем, есть ли у идентификатора группа доступа
                 if (identifier.ACCGROUP_ID == Guid.Empty || identifier.ACCGROUP_ID.ToString() == "00000000-0000-0000-0000-000000000000")
                 {
                     var desc = $"412 У идентификатора {hexValue} нет привязанной группы доступа (ACCGROUP_ID пустой)";
@@ -1319,18 +1667,24 @@ namespace ParsecIntegrationClient.Services
                     state.Attempts = row.ATTEMPS;
                     state.Timestamp = DateTime.Now;
                     state.keyNum = Key.keyNumber;
-                    return state;
+                    //StateService.SaveState(stateSkip2);
+                    //DatabaseService.DeleteIdInDevById(row.ID);
+                    return state; // Это не ошибка, просто пропускаем
                 }
 
                 inheritedAccessGroups.Remove(new Guid(model.GUID_ACCESS_GROUP));
 
                 Logger.Log<ParsecService>("Info", $"497 Идентификаторы после обновления: {Newtonsoft.Json.JsonConvert.SerializeObject(identifiers)}");
 
+
                 var creatingItem = new Identifier();
+
                 var personGuid = new Guid(model.GUID_PEP);
 
                 if (inheritedAccessGroups.Count == 0)
                 {
+                    // Если удаляемая категория была единственной во inherited-цепочке,
+                    // нужно "очистить" access-group у идентификатора, а не создавать группу с пустым inherited.
                     creatingItem = new Identifier()
                     {
                         ACCGROUP_ID = Guid.Empty,
@@ -1357,6 +1711,7 @@ namespace ParsecIntegrationClient.Services
 
                     Logger.Log<ParsecService>("Warning", $"356 Результат поиска группы доступа с такими же вложенными группами доступа " +
                         $"{resCheckAccessGroups}");
+
 
                     if (resCheckAccessGroups != Guid.Empty)
                     {
@@ -1391,12 +1746,21 @@ namespace ParsecIntegrationClient.Services
                             state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                             state.ErrorCode = 8;
                             state.keyNum = Key.keyNumber;
+                            //StateService.SaveState(state);
+                            //DatabaseService.IncrementAttemp(row);
                             return state;
                         }
 
                         var rGuid = resCreateAccessGroup.Value;
 
                         var resInerited = integServ.SetInheritedAccessGroups(ClientState.SessionID, rGuid, inheritedAccessGroups.ToArray());
+                        //ACCGROUP_ID
+                        //PRIVILEGE_MASK
+                        //IDENTIFTYPE
+                        //NAME
+                        //CODE
+                        //PERSON_ID
+                        //IS_PRIMARY
                         creatingItem = new Identifier()
                         {
                             ACCGROUP_ID = rGuid,
@@ -1425,6 +1789,8 @@ namespace ParsecIntegrationClient.Services
                     state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                     state.ErrorCode = 2;
                     state.keyNum = Key.keyNumber;
+                    //StateService.SaveState(state);
+                    //DatabaseService.IncrementAttemp(row);
                     return state;
                 }
 
@@ -1440,6 +1806,8 @@ namespace ParsecIntegrationClient.Services
                 state.Attempts = row.ATTEMPS;
                 state.Timestamp = DateTime.Now;
                 state.keyNum = Key.keyNumber;
+                //StateService.SaveState(state);
+                //DatabaseService.DeleteIdInDevById(row.ID);
                 return state;
             }
             catch (Exception ex)
@@ -1457,6 +1825,8 @@ namespace ParsecIntegrationClient.Services
                 state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                 state.ErrorCode = 17;
                 state.keyNum = Key.keyNumber;
+                //StateService.SaveState(state);
+                //DatabaseService.IncrementAttemp(row);
                 return state;
             }
         }
@@ -1469,6 +1839,8 @@ namespace ParsecIntegrationClient.Services
             string orgName = null;
             try
             {
+                //var state = new State();
+                //готовлю модель person
                 var query = "select p.id_pep, p.guid as guid_pep, " +
                     "o.guid as guid_org, p.name, p.surname, p.patronymic, p.tabnum, o.name as org_name " +
                     "from people p " +
@@ -1476,12 +1848,17 @@ namespace ParsecIntegrationClient.Services
                     $"where p.id_pep={row.ID_PEP};";
                 Logger.Log<ParsecService>("Error", $"528 {query}");
 
+
+
                 var people = DatabaseService.Get<DbModelAddPeople>(query);
                 komuName = DatabaseService.GetString(
     $"select coalesce(p.surname,'') || ' ' || coalesce(p.name,'') || ' ' || coalesce(p.patronymic,'') from people p where p.id_pep = {people.ID_PEP}");
 
+
                 if (people != null)
                 {
+
+                    //готовлю модель
                     var person = new Person()
                     {
                         ID = new Guid(people.GUID_PEP),
@@ -1494,6 +1871,7 @@ namespace ParsecIntegrationClient.Services
 
                     Logger.Log<ParsecService>("Info", $"554 Добавляется сотрудник {Newtonsoft.Json.JsonConvert.SerializeObject(person)}");
 
+                    //Есть ли уже этот сотрудник в базе данных СКУД? Если есть, то выхожу из программы.
                     if (CheckGuidePresent(person.ID))
                     {
                         state.ErrorCode = 18;
@@ -1510,11 +1888,16 @@ namespace ParsecIntegrationClient.Services
                         state.Timestamp = DateTime.Now;
                         state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                         state.keyNum = Key.keyNumber;
+                        //StateService.SaveState(state);
+                        //DatabaseService.IncrementAttemp(row);
+                        // throw new Exception(desc);
                         Logger.Log<ParsecService>("Error", $"1148 stop AddPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                         return state;
+
                     }
                     Logger.Log<ParsecService>("Warning", $"583 Сотрудник  с GUID {person.ID} (ФИО: {komuName}) нет в Парсек. Продолжаю добавление сотрудника.");
 
+                    //есть ли нужная организация? Если нет, то выход
                     if (!CheckGuidePresent(person.ORG_ID))
                     {
                         var desc = $"560 НЕ существует организация {people.ORG_NAME} с указанным GUID {person.ORG_ID} в Парсек. Работаю завершаю.";
@@ -1531,15 +1914,22 @@ namespace ParsecIntegrationClient.Services
                         state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                         state.ErrorCode = 19;
                         state.keyNum = Key.keyNumber;
+                        //StateService.SaveState(state);
+                        //DatabaseService.IncrementAttemp(row);
+                        //throw new Exception(desc);
                         Logger.Log<ParsecService>("Error", $"1172 stop AddPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                         return state;
+
                     }
                     Logger.Log<ParsecService>("Info", $"1176 Существует организаци с указанным  GUID {Newtonsoft.Json.JsonConvert.SerializeObject(person)}. Продолжаю добавление сотрудника.");
 
+                    //начинаю процесс добавления сотрудника
+
                     var integServ = new IntegrationService();
+                    //вставка
                     var res = integServ.CreatePerson(ClientState.SessionID, person);
 
-                    if (res.Result != ClientState.Result_Success)
+                    if (res.Result != ClientState.Result_Success)//не смог вставить сотрудника.
                     {
                         Logger.Log<ParsecService>("Error", $"605 не смог вставить сотрудника {Newtonsoft.Json.JsonConvert.SerializeObject(person)}");
                         Logger.Log<ParsecService>("Error", $"606 {res.ErrorMessage}");
@@ -1554,8 +1944,11 @@ namespace ParsecIntegrationClient.Services
                         state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                         state.ErrorCode = 1;
                         state.keyNum = Key.keyNumber;
+                        //StateService.SaveState(state);
+                        //DatabaseService.IncrementAttemp(row);
                         Logger.Log<ParsecService>("Error", $"1199 stop AddPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                         return state;
+
                     }
 
                     Logger.Log<ParsecService>("Info", $"466 Пользователь добавлен успешно {Newtonsoft.Json.JsonConvert.SerializeObject(person)}");
@@ -1567,6 +1960,8 @@ namespace ParsecIntegrationClient.Services
                     state.Attempts = row.ATTEMPS;
                     state.Timestamp = DateTime.Now;
                     state.keyNum = Key.keyNumber;
+                    //StateService.SaveState(state);
+                    //DatabaseService.DeleteIdInDevById(row.ID);
                     Logger.Log<ParsecService>("Error", $"1215 stop AddPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                     return state;
                 }
@@ -1584,8 +1979,11 @@ namespace ParsecIntegrationClient.Services
                 state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                 state.ErrorCode = 10;
                 state.keyNum = Key.keyNumber;
+                //StateService.SaveState(state);
+                //DatabaseService.IncrementAttemp(row);
                 Logger.Log<ParsecService>("Error", $"1232 stop AddPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                 return state;
+
             }
             catch (Exception ex)
             {
@@ -1603,6 +2001,8 @@ namespace ParsecIntegrationClient.Services
                 state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                 state.ErrorCode = 10;
                 state.keyNum = Key.keyNumber;
+                //StateService.SaveState(state);
+                //DatabaseService.IncrementAttemp(row);
                 Logger.Log<ParsecService>("Error", $"1252 stop AddPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                 return state;
             }
@@ -1615,9 +2015,12 @@ namespace ParsecIntegrationClient.Services
             DatabaseService.IncrementAttemp(row);
             try
             {
-                if (!CheckGuidePresent(new Guid(row.ID_CARD)))
+            //    var state = new State();
+
+                if (!CheckGuidePresent(new Guid(row.ID_CARD)))//если нет такого GUID в Парсеке, то и удалять нечего.
                 {
-                    var desc = $"629 сотрудник отсутвует в Парсек {Newtonsoft.Json.JsonConvert.SerializeObject(row)}. Команда по удалению выполнена успешно.";
+                    var desc =
+                        $"629 сотрудник отсутвует в Парсек {Newtonsoft.Json.JsonConvert.SerializeObject(row)}. Команда по удалению выполнена успешно.";
                     Logger.Log<ParsecService>("Info", desc);
                     state.desc = desc;
                     state.IdCardindev = row.ID;
@@ -1627,18 +2030,27 @@ namespace ParsecIntegrationClient.Services
                     state.Attempts = row.ATTEMPS;
                     state.Timestamp = DateTime.Now;
                     state.keyNum = Key.keyNumber;
+                    //StateService.SaveState(state);
+                    //DatabaseService.IncrementAttemp(row);//для отладки
+                    //DatabaseService.DeleteIdInDevById(row.ID);
                     Logger.Log<ParsecService>("Error", $"1281 stop RemovePeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                     return state;
+
                 }
                 Logger.Log<ParsecService>("Info",
                        $"629 сотрудник {Newtonsoft.Json.JsonConvert.SerializeObject(row)} присутвует в Парсек, продолжаю удаление сотрудника.");
+                //В этом случае в столбце ID_CARD храниться GUID пипла
+                //Собираю данные об удаляемомо пипле 
 
                 var integServ = new IntegrationService();
+                //var person = integServ.GetPerson(ClientState.SessionID, new Guid(row.ID_CARD));
 
                 var res = integServ.DeletePerson(ClientState.SessionID, new Guid(row.ID_CARD));
                 string json = JsonConvert.SerializeObject(res);
                 Logger.Log<ParsecService>("Error", $"1358 РЕЗУЛЬТАТ УДАЛЕНИЯ {json}");
 
+
+                //Удалене прошло успешно
                 if (res.Result == ClientState.Result_Success)
                 {
                     Logger.Log<ParsecService>("Info",
@@ -1653,11 +2065,14 @@ namespace ParsecIntegrationClient.Services
                     state2.Attempts = row.ATTEMPS;
                     state2.Timestamp = DateTime.Now;
                     state.keyNum = Key.keyNumber;
+                    //StateService.SaveState(state2);
+                    //DatabaseService.DeleteIdInDevById(row.ID);
                     Logger.Log<ParsecService>("Error", $"1328 stop RemovePeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                     return state2;
                 }
-                else
+                else //ошибка при удалении, далее делаем анализ причины ошибки
                 {
+                    //анализ текста ошибки исходя из ответа парсека. Если человека нет в парсек, то это нас устраивает => OK
                     if (res.ErrorMessage.Contains("Could not delete person. There is no person with id"))
                     {
                         var descForThis = "1311 удаление человека произошло успешно. Человека не было в Парсек";
@@ -1675,6 +2090,7 @@ namespace ParsecIntegrationClient.Services
                         return state;
                     }
                     state.ErrorCode = 20;
+                    //Логирование причины ошибки удаления
                     Logger.Log<ParsecService>("Error", $"498 КОД ОШИБКИ: {state.ErrorCode} Ошибка при удалении пользователя. " +
                         $"Ошибка: {res.ErrorMessage}");
                     state.desc = $"1300 Ошибка при удалении пользователя: {res.ErrorMessage}";
@@ -1687,9 +2103,13 @@ namespace ParsecIntegrationClient.Services
                     state.Timestamp = DateTime.Now;
                     state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                     state.keyNum = Key.keyNumber;
+                    //StateService.SaveState(state);
+                    //DatabaseService.IncrementAttemp(row);
                     Logger.Log<ParsecService>("Error", $"1310 stop RemovePeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                     return state;
+
                 }
+
             }
             catch (Exception ex)
             {
@@ -1706,9 +2126,12 @@ namespace ParsecIntegrationClient.Services
                 state.Timestamp = DateTime.Now;
                 state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                 state.keyNum = Key.keyNumber;
+                //StateService.SaveState(state);
+                //DatabaseService.IncrementAttemp(row);
                 Logger.Log<ParsecService>("Error", $"1346 stop RemovePeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                 throw;
             }
+            Logger.Log<ParsecService>("Error", $"665 stop RemovePeople {Newtonsoft.Json.JsonConvert.SerializeObject(row)}");
         }
 
         public static State AddOrg(DbModelRowIDInDev row)
@@ -1717,6 +2140,7 @@ namespace ParsecIntegrationClient.Services
             Logger.Log<ParsecService>("Error", $"1353 start AddOrg {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
             try
             {
+
                 var query = "select o.guid as guide_for_add, " +
                     "o2.guid as guid_for_parent, o.name, o.divcode, o.id_org from organization o " +
                     "join organization o2 on o2.id_org=o.id_parent " +
@@ -1724,8 +2148,13 @@ namespace ParsecIntegrationClient.Services
 
                 var model = DatabaseService.Get<DbModelAddOrg>(query);
 
+
+
                 Logger.Log<ParsecService>("Warning", $"533 Добавление организации |" +
                     $" NAME: {model.NAME} DIVCODE: {model.DIVCODE}");
+
+
+
 
                 if (model.NAME == null)
                 {
@@ -1743,6 +2172,8 @@ namespace ParsecIntegrationClient.Services
                     state.Timestamp = DateTime.Now;
                     state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                     state.keyNum = Key.keyNumber;
+                    //StateService.SaveState(state);
+                    //DatabaseService.IncrementAttemp(row);
                     Logger.Log<ParsecService>("Error", $"1388 stop AddOrg {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                     return state;
                 }
@@ -1772,6 +2203,9 @@ namespace ParsecIntegrationClient.Services
                     state.Timestamp = DateTime.Now;
                     state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                     state.keyNum = Key.keyNumber;
+
+                    //StateService.SaveState(state);
+                    //DatabaseService.IncrementAttemp(row);
                     Logger.Log<ParsecService>("Error", $"1417 stop AddOrg {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                     return state;
                 }
@@ -1787,6 +2221,8 @@ namespace ParsecIntegrationClient.Services
                 state.Attempts = row.ATTEMPS;
                 state.Timestamp = DateTime.Now;
                 state.keyNum = Key.keyNumber;
+                //StateService.SaveState(state);
+                //DatabaseService.DeleteIdInDevById(row.ID);
                 Logger.Log<ParsecService>("Error", $"1434 stop AddOrg {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                 return state;
             }
@@ -1805,6 +2241,8 @@ namespace ParsecIntegrationClient.Services
                 state.Timestamp = DateTime.Now;
                 state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                 state.keyNum = Key.keyNumber;
+                //StateService.SaveState(state);
+                //DatabaseService.IncrementAttemp(row);
                 Logger.Log<ParsecService>("Error", $"1451 stop AddOrg {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                 throw;
             }
@@ -1836,6 +2274,8 @@ namespace ParsecIntegrationClient.Services
                     state.Timestamp = DateTime.Now;
                     state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                     state.keyNum = Key.keyNumber;
+                    //StateService.SaveState(state);
+                    //DatabaseService.IncrementAttemp(row);
                     Logger.Log<ParsecService>("Error", $"1481 stop RemoveOrg {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                     return state;
                 }
@@ -1850,8 +2290,11 @@ namespace ParsecIntegrationClient.Services
                 state.Attempts = row.ATTEMPS;
                 state.Timestamp = DateTime.Now;
                 state.keyNum = Key.keyNumber;
+                //StateService.SaveState(state);
+                //DatabaseService.DeleteIdInDevById(row.ID);
                 Logger.Log<ParsecService>("Error", $"1496 stop RemoveOrg {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                 return state;
+
             }
             catch (Exception ex)
             {
@@ -1868,6 +2311,8 @@ namespace ParsecIntegrationClient.Services
                 state.Timestamp = DateTime.Now;
                 state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                 state.keyNum = Key.keyNumber;
+                //StateService.SaveState(state);
+                //DatabaseService.IncrementAttemp(row);
                 Logger.Log<ParsecService>("Error", $"1515 stop RemoveOrg {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                 throw;
             }
@@ -1881,6 +2326,7 @@ namespace ParsecIntegrationClient.Services
             {
                 var query = "select p.guid, p.tabnum, p.name, p.patronymic, " +
                     $"p.surname from people p where p.id_pep = {row.ID_PEP}";
+
 
                 var list = DatabaseService.GetList<DbModelAddCard>(query);
 

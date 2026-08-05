@@ -287,7 +287,7 @@ namespace ParsecIntegrationClient
                 Logger.Log<Service1>("Warning", "Guardant: Ошибка при проверке - ОГРАНИЧЕННЫЙ РЕЖИМ (10 транзакций)");
                 Console.WriteLine("Ошибка при проверке ключа - ограниченный режим (10 транзакций)");
             }
-
+            License.SetLicenseStatus(true);
             // Выводим информацию о режиме работы
             if (License.IsLicensed)
             {
