@@ -18,7 +18,7 @@ namespace ParsecIntegrationClient.Services
 
         public static void Execute()
         {
-            Logger.Log<MainJob>("Warning", "ЗАПУСК ОБРАБОТКИ ЗАДАЧ");
+            Logger.Log<MainJob>("Warning", "21 ЗАПУСК ОБРАБОТКИ ЗАДАЧ");
             var state = new State();
             // Проверка лицензии перед началом обработки
             if (!License.CanPerformOperation())
@@ -61,7 +61,7 @@ namespace ParsecIntegrationClient.Services
                 return;
             }
 
-            Logger.Log<MainJob>("Warning", $"Получено {rows.Length} записей для выполнения");
+            Logger.Log<MainJob>("Warning", $"64 Получено {rows.Length} записей для выполнения");
 
             // Проверяем глобальный таймаут ошибок перед началом обработки
             var stateFilePath = StateService.DefaultStateFilePath;
@@ -85,9 +85,12 @@ namespace ParsecIntegrationClient.Services
                             Logger.Log<MainJob>("Info", "Таймаут ошибок истек, возобновляем обработку");
                         }
                     }
+                } else {
+                    Logger.Log<MainJob>("Warning", $"89 отладка");
                 }
+                Logger.Log<MainJob>("Warning", $"91 отладка");
             }
-
+            Logger.Log<MainJob>("Warning", $"90 Продолжаю работу с {rows.Length} записями.");
             // Далее после команды обновляем state-файл, читая только "новые" строки.
             var logFilePath = StateService.GetLogFilePath(DateTime.Now);
             var prevLogPosition = StateService.GetLogFileLength(logFilePath);

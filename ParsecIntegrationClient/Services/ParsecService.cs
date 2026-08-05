@@ -95,11 +95,11 @@ namespace ParsecIntegrationClient.Services
         }
 
         /// <summary>
-        /// Главный метод-координатор для добавления идентификатора сотруднику
+        /// Главный метод-координатор для добавления идентификатора сотруднику. ОБработка команды 7
         /// </summary>
         public static State AddIdentifierPeople(DbModelRowIDInDev row)
         {
-            Logger.Log<ParsecService>("Info", $"Start AddIdentifierPeople {row.ID}");
+            Logger.Log<ParsecService>("Info", $"102 Start AddIdentifierPeople {row.ID}");
 
             try
             {
@@ -111,11 +111,11 @@ namespace ParsecIntegrationClient.Services
 
                 if (models == null || models.Count == 0)
                 {
-                    Logger.Log<ParsecService>("Warning", "No models found");
+                    Logger.Log<ParsecService>("Warning", "114 No models found");
                     return CreateErrorState(row, "Модели данных не найдены", 1);
                 }
 
-                Logger.Log<ParsecService>("Info", $"Found {models.Count} models to process");
+                Logger.Log<ParsecService>("Info", $"118 Found {models.Count} models to process");
 
                 // 3. Обработка КАЖДОЙ модели в цикле
                 var successCount = 0;
@@ -128,41 +128,43 @@ namespace ParsecIntegrationClient.Services
                 {
                     index++;
 
-                    Logger.Log<ParsecService>("Info", $"Processing model {index}/{models.Count}: Card={model.CODE}");
+                    Logger.Log<ParsecService>("Info", $"131 Processing model {index}/{models.Count}: Card={model.CODE}");
 
                     // Проверка типа карты
                     if (!int.TryParse(model.CARDTYPE, out int cardType) || cardType != 1)
                     {
                         errorCount++;
-                        var errorMsg = $"Интегратор не обрабатывает идентификаторы с типом {model.CARDTYPE}";
-                        errorMessages.Add($"Модель {index}: {errorMsg}");
-                        Logger.Log<ParsecService>("Warning", $"Skipped model {index}: {errorMsg}");
+                        var errorMsg = $"137 Интегратор не обрабатывает идентификаторы с типом {model.CARDTYPE}";
+                        errorMessages.Add($"138 Модель {index}: {errorMsg}");
+                        Logger.Log<ParsecService>("Warning", $"139 Skipped model {index}: {errorMsg}");
                         continue;
                     }
-
+                    Logger.Log<ParsecService>("Warning", $"142 отладка");
+                    
                     // Валидация модели
                     var validationState = ValidateModel(model, row);
                     if (validationState != null)
                     {
                         errorCount++;
-                        errorMessages.Add($"Модель {index}: {validationState.ErrorMessage}");
-                        Logger.Log<ParsecService>("Warning", $"Validation failed for model {index}");
+                        errorMessages.Add($"148 Модель {index}: {validationState.ErrorMessage}");
+                        Logger.Log<ParsecService>("Warning", $"149 Validation failed for model {index}");
                         continue;
                     }
-
+                    Logger.Log<ParsecService>("Warning", $"152 отладка");
+                    
                     // Основная бизнес-логика
                     lastState = ProcessIdentifierAddition(row, model);
-
+                    Logger.Log<ParsecService>("Warning", $"155 отладка");
                     if (lastState.Status == "OK")
                     {
                         successCount++;
-                        Logger.Log<ParsecService>("Info", $"Model {index} processed successfully");
+                        Logger.Log<ParsecService>("Info", $"159 Model {index} processed successfully");
                     }
                     else
                     {
                         errorCount++;
                         errorMessages.Add($"Модель {index}: {lastState.ErrorMessage}");
-                        Logger.Log<ParsecService>("Error", $"Model {index} failed: {lastState.ErrorMessage}");
+                        Logger.Log<ParsecService>("Error", $"165 Model {index} failed: {lastState.ErrorMessage}");
 
                         // Критическая ошибка - прерываем обработку
                         if (lastState.ErrorCode >= 7)
@@ -170,35 +172,37 @@ namespace ParsecIntegrationClient.Services
                             return lastState;
                         }
                     }
+
+                    Logger.Log<ParsecService>("Warning", $"176 отладка");
                 }
 
                 // 4. Формируем итоговый результат
-                Logger.Log<ParsecService>("Info", $"Processing completed: Total={models.Count}, Success={successCount}, Errors={errorCount}");
+                Logger.Log<ParsecService>("Info", $"176 Processing completed: Total={models.Count}, Success={successCount}, Errors={errorCount}");
 
                 if (successCount > 0 && errorCount == 0)
                 {
-                    return CreateSuccessState(row, $"Все {successCount} операций выполнены успешно");
+                    return CreateSuccessState(row, $"180 Все {successCount} операций выполнены успешно");
                 }
                 else if (successCount > 0 && errorCount > 0)
                 {
-                    var summary = $"Выполнено {successCount} операций, {errorCount} с ошибками. Детали: {string.Join("; ", errorMessages)}";
+                    var summary = $"184 Выполнено {successCount} операций, {errorCount} с ошибками. Детали: {string.Join("; ", errorMessages)}";
                     return CreatePartialSuccessState(row, summary);
                 }
                 else if (successCount == 0 && errorCount > 0)
                 {
-                    var summary = $"Все {errorCount} операций завершились с ошибками: {string.Join("; ", errorMessages)}";
+                    var summary = $"189 Все {errorCount} операций завершились с ошибками: {string.Join("; ", errorMessages)}";
                     return CreateErrorState(row, summary, 99);
                 }
                 else
                 {
-                    return CreateErrorState(row, "Неизвестная ошибка при обработке", 99);
+                    return CreateErrorState(row, "194 Неизвестная ошибка при обработке", 99);
                 }
             }
             catch (Exception ex)
             {
-                Logger.Log<ParsecService>("Error", $"Critical error in AddIdentifierPeople: {ex.Message}");
+                Logger.Log<ParsecService>("Error", $"199 Critical error in AddIdentifierPeople: {ex.Message}");
                 DatabaseService.IncrementAttemp(row);
-                return CreateErrorState(row, $"Критическая ошибка: {ex.Message}", 9);
+                return CreateErrorState(row, $"201 Критическая ошибка: {ex.Message}", 9);
             }
         }
 
@@ -214,8 +218,8 @@ namespace ParsecIntegrationClient.Services
                         $"where c.id_pep = {row.ID_PEP} " +
                         $"and an.id_accessname = {row.ID_CARD}";
 
-            Logger.Log<ParsecService>("Info", $"Executing query for models with ID_PEP={row.ID_PEP}, ID_CARD={row.ID_CARD}");
-            Logger.Log<ParsecService>("Debug", $"Query: {query}");
+            Logger.Log<ParsecService>("Info", $"217 Executing query for models with ID_PEP={row.ID_PEP}, ID_CARD={row.ID_CARD}");
+            Logger.Log<ParsecService>("Debug", $"218 Query: {query}");
 
             return query;
         }
@@ -316,7 +320,7 @@ namespace ParsecIntegrationClient.Services
 
                 // 7. Успешное завершение
                 Logger.Log<ParsecService>("Info",
-                    $"Идентификатор успешно добавлен | Сотрудник: {person.FIRST_NAME} {person.LAST_NAME} | Карта: {hexValue}");
+                    $"319 Идентификатор успешно добавлен | Сотрудник: {person.FIRST_NAME} {person.LAST_NAME} | Карта: {hexValue}");
 
                 return CreateSuccessState(row, "Операция выполнена успешно");
             }
@@ -375,7 +379,7 @@ namespace ParsecIntegrationClient.Services
             if (existingIdentifier != null && existingIdentifier.ACCGROUP_ID != Guid.Empty)
             {
                 Logger.Log<ParsecService>("Info",
-                    $"У карты {hexValue} уже есть группа доступа {existingIdentifier.ACCGROUP_ID}. " +
+                    $"378 У карты {hexValue} уже есть группа доступа {existingIdentifier.ACCGROUP_ID}. " +
                     "Формируем inherited-цепочку");
 
                 // Получаем цепочку наследования
@@ -391,7 +395,7 @@ namespace ParsecIntegrationClient.Services
             {
                 // Просто назначаем целевую группу доступа
                 creatingItem.ACCGROUP_ID = accessGroupGuid;
-                Logger.Log<ParsecService>("Info", $"Назначаем группу доступа {accessGroupGuid} для карты {hexValue}");
+                Logger.Log<ParsecService>("Info", $"394 Назначаем группу доступа {accessGroupGuid} для карты {hexValue}");
             }
 
             return creatingItem;
@@ -413,7 +417,7 @@ namespace ParsecIntegrationClient.Services
             if (!inheritedGroups.Any())
             {
                 inheritedGroups.Add(currentGroupId);
-                Logger.Log<ParsecService>("Info", $"Цепочка наследования пуста, добавляем базовую группу {currentGroupId}");
+                Logger.Log<ParsecService>("Info", $"416 Цепочка наследования пуста, добавляем базовую группу {currentGroupId}");
             }
 
             // Добавляем целевую группу
@@ -423,7 +427,7 @@ namespace ParsecIntegrationClient.Services
             var distinctChain = inheritedGroups.Distinct().ToList();
 
             Logger.Log<ParsecService>("Info",
-                $"Сформирована цепочка наследования из {distinctChain.Count} групп: " +
+                $"426 Сформирована цепочка наследования из {distinctChain.Count} групп: " +
                 string.Join(" -> ", distinctChain));
 
             return distinctChain;
@@ -440,7 +444,7 @@ namespace ParsecIntegrationClient.Services
             var existingGroupId = CheckAccessGroups(inheritedChain);
             if (existingGroupId != Guid.Empty)
             {
-                Logger.Log<ParsecService>("Info", $"Найдена существующая группа доступа {existingGroupId} с нужной цепочкой");
+                Logger.Log<ParsecService>("Info", $"447 Найдена существующая группа доступа {existingGroupId} с нужной цепочкой");
                 return existingGroupId;
             }
 
@@ -449,7 +453,7 @@ namespace ParsecIntegrationClient.Services
             var schedules = integServ.GetAccessSchedules(ClientState.SessionID);
             var scheduleId = schedules?.FirstOrDefault()?.ID ?? Guid.Empty;
 
-            Logger.Log<ParsecService>("Info", $"Создаем новую группу доступа '{groupName}' с расписанием {scheduleId}");
+            Logger.Log<ParsecService>("Info", $"456 Создаем новую группу доступа '{groupName}' с расписанием {scheduleId}");
 
             var createResult = integServ.CreateAccessGroup(
                 ClientState.SessionID,
@@ -467,7 +471,7 @@ namespace ParsecIntegrationClient.Services
             // 3. Устанавливаем цепочку наследования
             integServ.SetInheritedAccessGroups(ClientState.SessionID, newGroupId, inheritedChain.ToArray());
 
-            Logger.Log<ParsecService>("Info", $"Создана группа доступа {newGroupId} с цепочкой наследования");
+            Logger.Log<ParsecService>("Info", $"474 Создана группа доступа {newGroupId} с цепочкой наследования");
 
             return newGroupId;
         }
@@ -1687,7 +1691,7 @@ namespace ParsecIntegrationClient.Services
                     state.Timestamp = DateTime.Now;
                     state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                     state.keyNum = Key.keyNumber;
-                    Logger.Log<ParsecService>("Error", $"1310 stop RemovePeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+                    Logger.Log<ParsecService>("Error", $"1690 stop RemovePeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                     return state;
                 }
             }
