@@ -121,7 +121,7 @@ namespace ParsecIntegrationClient.Services
                 var query = BuildAddAccessCatQuery(row);
 
                 // 2. Получение модели категории доступа из БД через Get. модель содержит в себе guid пипла и категории доступа.
-                var model = DatabaseService.Get<DbModelAddAccessCategory>(query);
+                var model = DatabaseService.Get<DbModelAccessCategoryForPeople>(query);
 
                 if (model == null)
                 {
@@ -279,7 +279,7 @@ namespace ParsecIntegrationClient.Services
         /// <summary>
         /// Основная логика добавления категории доступа идентификаторам
         /// </summary>
-        private static State ProcessAccessCatAddition(DbModelRowIDInDev row, DbModelAddAccessCategory model)
+        private static State ProcessAccessCatAddition(DbModelRowIDInDev row, DbModelAccessCategoryForPeople model)
         {
             var integServ = new IntegrationService();
             var accessGroupGuid = new Guid(model.GUID_ACCGROUP);
@@ -819,10 +819,218 @@ namespace ParsecIntegrationClient.Services
 
         // ==================== ОСТАЛЬНЫЕ МЕТОДЫ (без изменений) ====================
 
-       
+        /// <summary>
+        /// Главный метод-координатор для удаления категории доступа у идентификаторов. Обработка команды 8
+        /// на входе - строка из таблицы cardindev
+        /// </summary>
+        public static State RemoveIdentifierPeople(DbModelRowIDInDev row)
+        {
+            Logger.Log<ParsecService>("Info", $"828 Start RemoveIdentifierPeople {row.ID}");
+
+            try
+            {
+                // 1. Формирование SQL-запроса для выборки guid'ов пипла и категории доступа
+                var query = BuildRemoveAccessCatQuery(row);
+
+                // 2. Получение модели категории доступа из БД
+                var model = DatabaseService.Get<DbModelAccessCategoryForPeople>(query);
+
+                if (model == null)
+                {
+                    Logger.Log<ParsecService>("Warning", "840 Модель данных не найдена");
+                    return CreateErrorState(row, "841 Модель данных не найдена", 1);
+                }
+
+                Logger.Log<ParsecService>("Info", $"844 Найден GUID_ACCGROUP {model.GUID_ACCGROUP} для удаления");
+
+                // 3. Обработка удаления категории доступа
+                var result = ProcessAccessCatRemoval(row, model);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log<ParsecService>("Error", $"853 Critical error in RemoveIdentifierPeople: {ex.Message}");
+                DatabaseService.IncrementAttemp(row);
+                return CreateErrorState(row, $"855 Критическая ошибка: {ex.Message}", 9);
+            }
+        }
+
+        /// <summary>
+        /// Формирование SQL-запроса для получения модели удаления категории доступа
+        /// </summary>
+        private static string BuildRemoveAccessCatQuery(DbModelRowIDInDev row)
+        {
+            var query = $"select p.guid, an.guid from accessname an, people p " +
+                        $"where p.id_pep = {row.ID_PEP} " +
+                        $"and an.id_accessname = {row.ID_CARD}";
+
+            Logger.Log<ParsecService>("Info", $"868 Executing query for remove access cat with ID_PEP={row.ID_PEP}, ID_accessname={row.ID_CARD}");
+            Logger.Log<ParsecService>("Debug", $"869 Query: {query}");
+
+            return query;
+        }
+
+        /// <summary>
+        /// Основная логика удаления категории доступа у идентификаторов
+        /// </summary>
+        private static State ProcessAccessCatRemoval(DbModelRowIDInDev row, DbModelAccessCategoryForPeople model)
+        {
+            var integServ = new IntegrationService();
+            var accessGroupGuid = new Guid(model.GUID_ACCGROUP);
+            var person = integServ.GetPerson(ClientState.SessionID, new Guid(model.GUID_PEP));
+
+            if (person == null)
+            {
+                Logger.Log<ParsecService>("Warning", $"885 Пользователь с GUID: {model.GUID_PEP} не найден в Parsec");
+                return CreateSuccessState(row, "886 Пользователь не найден в Parsec, задача удалена");
+            }
+
+            // Открываем сессию редактирования
+            var sessionResult = integServ.OpenPersonEditingSession(ClientState.SessionID, new Guid(model.GUID_PEP));
+            if (sessionResult.Result != ClientState.Result_Success)
+            {
+                var errorMsg = $"893 Ошибка открытия сессии редактирования: {sessionResult.ErrorMessage}";
+                Logger.Log<ParsecService>("Error", errorMsg);
+                return CreateErrorState(row, errorMsg, 7);
+            }
+
+            var editSessionID = sessionResult.Value;
+
+            try
+            {
+                // Получаем идентификаторы пользователя
+                var identifiers = integServ.GetPersonIdentifiers(ClientState.SessionID, new Guid(model.GUID_PEP));
+                if (identifiers == null || identifiers.Length == 0)
+                {
+                    Logger.Log<ParsecService>("Warning", $"906 У пользователя {person.FIRST_NAME} нет идентификаторов");
+                    return CreateSuccessState(row, "907 Идентификаторы не найдены, задача удалена");
+                }
+
+                Logger.Log<ParsecService>("Info", $"910 Найдено {identifiers.Length} идентификаторов для {person.FIRST_NAME}");
+
+                // Обрабатываем каждый идентификатор
+                foreach (var identifier in identifiers)
+                {
+                    ProcessSingleIdentifierRemoval(
+                        identifier,
+                        accessGroupGuid,
+                        editSessionID,
+                        integServ,
+                        row);
+                }
+
+                return CreateSuccessState(row, "923 Операция удаления выполнена успешно");
+            }
+            finally
+            {
+                CloseEditingSession(integServ, editSessionID);
+            }
+        }
+
+        /// <summary>
+        /// Обработка удаления категории доступа у одного идентификатора
+        /// </summary>
+        private static void ProcessSingleIdentifierRemoval(
+            Identifier identifier,
+            Guid accessGroupToRemove,
+            Guid editSessionID,
+            IntegrationService integServ,
+            DbModelRowIDInDev row)
+        {
+            Logger.Log<ParsecService>("Info", $"941 Обработка удаления для карты {identifier.CODE}");
+
+            // Проверяем, есть ли у идентификатора группа доступа
+            if (identifier.ACCGROUP_ID == Guid.Empty || identifier.ACCGROUP_ID.ToString() == "00000000-0000-0000-0000-000000000000")
+            {
+                Logger.Log<ParsecService>("Warning", $"946 У карты {identifier.CODE} нет привязанной группы доступа, пропускаем");
+                return;
+            }
+
+            // Получаем цепочку наследования для текущей группы
+            var inheritedAccessGroups = integServ.GetInheritedAccessGroups(ClientState.SessionID, identifier.ACCGROUP_ID)?.ToList()
+                                        ?? new List<Guid>();
+
+            Logger.Log<ParsecService>("Info", $"954 Текущая цепочка наследования: {string.Join(" -> ", inheritedAccessGroups)}");
+
+            // Удаляем целевую группу из цепочки
+            var removed = inheritedAccessGroups.Remove(accessGroupToRemove);
+
+            if (!removed)
+            {
+                Logger.Log<ParsecService>("Warning", $"961 Группа {accessGroupToRemove} не найдена в цепочке наследования карты {identifier.CODE}");
+                return;
+            }
+
+            Logger.Log<ParsecService>("Info", $"965 После удаления группы {accessGroupToRemove}: {string.Join(" -> ", inheritedAccessGroups)}");
+
+            // Создаем обновленный идентификатор
+            var updatedIdentifier = BuildUpdatedIdentifierAfterRemoval(
+                identifier,
+                inheritedAccessGroups,
+                accessGroupToRemove,
+                integServ);
+
+            // Логируем обновление
+            Logger.Log<ParsecService>("Info", $"975 Обновление идентификатора: CODE={updatedIdentifier.CODE}, ACCGROUP_ID={updatedIdentifier.ACCGROUP_ID}");
+
+            // Вызываем метод обновления
+            var result = integServ.AddPersonIdentifier(editSessionID, updatedIdentifier);
+
+            if (result.Result != ClientState.Result_Success)
+            {
+                throw new InvalidOperationException($"982 Ошибка обновления идентификатора: {result.ErrorMessage}");
+            }
+
+            Logger.Log<ParsecService>("Info", $"985 Карта {identifier.CODE} успешно обновлена, удалена группа {accessGroupToRemove}");
+        }
+
+        /// <summary>
+        /// Создание обновленного идентификатора после удаления группы доступа
+        /// </summary>
+        private static Identifier BuildUpdatedIdentifierAfterRemoval(
+            Identifier originalIdentifier,
+            List<Guid> inheritedGroups,
+            Guid removedGroupId,
+            IntegrationService integServ)
+        {
+            var updatedIdentifier = originalIdentifier;
+
+            if (inheritedGroups.Count == 0)
+            {
+                // Если группа была единственной - очищаем ACCGROUP_ID
+                updatedIdentifier.ACCGROUP_ID = Guid.Empty;
+                Logger.Log<ParsecService>("Info", $"У карты {originalIdentifier.CODE} не осталось групп, ACCGROUP_ID = Guid.Empty");
+            }
+            else if (inheritedGroups.Count == 1)
+            {
+                // Если осталась одна группа - назначаем её
+                updatedIdentifier.ACCGROUP_ID = inheritedGroups[0];
+                Logger.Log<ParsecService>("Info", $"У карты {originalIdentifier.CODE} осталась одна группа {inheritedGroups[0]}");
+            }
+            else
+            {
+                // Если осталось несколько групп - ищем или создаем составную группу
+                var existingGroup = CheckAccessGroups(inheritedGroups);
+
+                if (existingGroup != Guid.Empty)
+                {
+                    updatedIdentifier.ACCGROUP_ID = existingGroup;
+                    Logger.Log<ParsecService>("Info", $"Найдена существующая группа {existingGroup} для цепочки");
+                }
+                else
+                {
+                    // Создаем новую группу с оставшейся цепочкой
+                    updatedIdentifier.ACCGROUP_ID = CreateAccessGroupWithInheritance(inheritedGroups, integServ);
+                    Logger.Log<ParsecService>("Info", $"Создана новая группа {updatedIdentifier.ACCGROUP_ID} для оставшейся цепочки");
+                }
+            }
+
+            return updatedIdentifier;
+        }
 
         //Удаление идентификатора
-        public static State RemoveIdentifierPeople(DbModelRowIDInDev row)
+        public static State _RemoveIdentifierPeople(DbModelRowIDInDev row)
         {
             var state = new State();
             Logger.Log<ParsecService>("Warning", $"658 Start RemoveIdentifierPeople {row.ID}");
@@ -1263,7 +1471,7 @@ namespace ParsecIntegrationClient.Services
             var state = new State();
             Logger.Log<ParsecService>("Error", $"537 start AddPeople {row.ID}");
             string komuName = null;
-            string orgName = null;
+           
             try
             {
                 var query = "select p.id_pep, p.guid as guid_pep, " +

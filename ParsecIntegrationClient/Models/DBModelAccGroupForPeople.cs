@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ParsecIntegrationClient.Models
 {
-    internal class DbModelAddAccessCategory
+    internal class DbModelAccessCategoryForPeople
     {
 
         //Кому добавлять
