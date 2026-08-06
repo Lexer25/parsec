@@ -49,7 +49,7 @@ namespace ParsecIntegrationClient.Services
             set { DatabaseJobTimeout = value; }
         }
 
-        public static int DatabaseJobTimeout = 60;
+        public static int DatabaseJobTimeout = 600;
 
         public int _errorTimeoutMinutes
         {

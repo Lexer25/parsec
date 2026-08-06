@@ -16,6 +16,12 @@ namespace ParsecIntegrationClient.Services
     public class ParsecService
     {
 
+        /// <summary>
+        /// Поиск указанных категорий доступа в списке всех категорий доступа.
+        /// ответ: accessGroup.ID найденной группы доступа
+        /// </summary>
+        /// <param name="InheritedAccessGroups"></param>
+        /// <returns></returns>
         public static Guid CheckAccessGroups(List<Guid> InheritedAccessGroups)
         {
             var integServ = new IntegrationService();
@@ -63,6 +69,13 @@ namespace ParsecIntegrationClient.Services
             }
         }
 
+        /// <summary>
+        /// проверка наличия категории доступа
+        /// если не найдена, то вернет nuu
+        /// если найдена, то вернет список категорий доступа, куда входит искомая категория
+        /// </summary>
+        /// <param name="idGroup"></param>
+        /// <returns></returns>
         public static AccessGroup GetAccessGroups(Guid idGroup)
         {
             try
@@ -96,7 +109,92 @@ namespace ParsecIntegrationClient.Services
 
         /// <summary>
         /// Главный метод-координатор для добавления идентификатора сотруднику. ОБработка команды 7
+        /// на вхогде - строка из таблицы cardindev
         /// </summary>
+        public static State AddAccGroupPeople(DbModelRowIDInDev row)
+        {
+            Logger.Log<ParsecService>("Info", $"102 Start AddIdentifierPeople {row.ID}");
+
+            try
+            {
+                // 1. Формирование SQL-запроса для выборки guid'ов пипла и категории доступа
+                var query = BuildAddAccessCatQuery(row);
+
+                // 2. Получение модели категории доступа из БД через Get. модель содержит в себе guid пипла и категории доступа.
+                var model = DatabaseService.Get<DbModelAddAccessCategory>(query);
+
+                if (model == null)
+                {
+                    Logger.Log<ParsecService>("Warning", "114 No models found");
+                    return CreateErrorState(row, "Модели данных не найдены", 1);
+                }
+
+                Logger.Log<ParsecService>("Info", $"118 Found GUID_ACCGROUP {model.GUID_ACCGROUP} models to process");
+
+                // 3. Обработка модели 
+                var successCount = 0;
+                var errorCount = 0;
+                var errorMessages = new List<string>();
+                State lastState = null;
+                int index = 0;
+
+                    Logger.Log<ParsecService>("Warning", $"152 отладка");
+                    
+                    // Основная бизнес-логика
+                    //
+                    lastState = ProcessAccessCatAddition(row, model);
+                    Logger.Log<ParsecService>("Warning", $"155 отладка");
+                    if (lastState.Status == "OK")
+                    {
+                        successCount++;
+                        Logger.Log<ParsecService>("Info", $"159 Model {index} processed successfully");
+                    }
+                    else
+                    {
+                        errorCount++;
+                        errorMessages.Add($"Модель {index}: {lastState.ErrorMessage}");
+                        Logger.Log<ParsecService>("Error", $"165 Model {index} failed: {lastState.ErrorMessage}");
+
+                        // Критическая ошибка - прерываем обработку
+                        if (lastState.ErrorCode >= 7)
+                        {
+                            return lastState;
+                        }
+                    }
+
+                    Logger.Log<ParsecService>("Warning", $"176 отладка");
+
+
+                // 4. Формируем итоговый результат
+                Logger.Log<ParsecService>("Info", $"176 Processing completed: Total=, Success={successCount}, Errors={errorCount}");
+
+                if (successCount > 0 && errorCount == 0)
+                {
+                    return CreateSuccessState(row, $"180 Все {successCount} операций выполнены успешно");
+                }
+                else if (successCount > 0 && errorCount > 0)
+                {
+                    var summary = $"184 Выполнено {successCount} операций, {errorCount} с ошибками. Детали: {string.Join("; ", errorMessages)}";
+                    return CreatePartialSuccessState(row, summary);
+                }
+                else if (successCount == 0 && errorCount > 0)
+                {
+                    var summary = $"189 Все {errorCount} операций завершились с ошибками: {string.Join("; ", errorMessages)}";
+                    return CreateErrorState(row, summary, 99);
+                }
+                else
+                {
+                    return CreateErrorState(row, "194 Неизвестная ошибка при обработке", 99);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log<ParsecService>("Error", $"199 Critical error in AddIdentifierPeople: {ex.Message}");
+                DatabaseService.IncrementAttemp(row);
+                return CreateErrorState(row, $"201 Критическая ошибка: {ex.Message}", 9);
+            }
+        }
+
         public static State AddIdentifierPeople(DbModelRowIDInDev row)
         {
             Logger.Log<ParsecService>("Info", $"102 Start AddIdentifierPeople {row.ID}");
@@ -209,6 +307,23 @@ namespace ParsecIntegrationClient.Services
         /// <summary>
         /// Формирование SQL-запроса для получения моделей идентификаторов
         /// </summary>
+        private static string BuildAddAccessCatQuery(DbModelRowIDInDev row)
+        {
+             var query = "select  p.guid, an.guid  from accessname an , people p " +
+                        $"where p.id_pep = {row.ID_PEP} " +
+                        $"and an.id_accessname = {row.ID_CARD}";
+
+
+
+            Logger.Log<ParsecService>("Info", $"331 Executing query for models addAccessCat with ID_PEP={row.ID_PEP}, ID_accessname={row.ID_CARD}");
+            Logger.Log<ParsecService>("Debug", $"332 Query: {query}");
+
+            return query;
+        }
+
+        /// <summary>
+        /// Формирование SQL-запроса для получения моделей идентификаторов
+        /// </summary>
         private static string BuildIdentifierQuery(DbModelRowIDInDev row)
         {
             var query = "select c.id_card, an.guid, p.guid as people_guid, " +
@@ -267,6 +382,256 @@ namespace ParsecIntegrationClient.Services
 
             return null; // Валидация пройдена
         }
+
+        /// <summary>
+        /// !!! Основная логика добавления категории доступа идентификаторам
+        /// </summary>
+        private static State ProcessAccessCatAddition(DbModelRowIDInDev row, DbModelAddAccessCategory model)
+        {
+            var state = new State();
+            // Logger.Log<ParsecService>("Warning", $"62 Start AddIdentifierPeople {row.ID}");
+            var integServ = new IntegrationService();
+            var accessGroupGuid = new Guid(model.GUID_ACCGROUP);//сделал явную переменную категории доступа
+            var accesGroup = GetAccessGroups(new Guid(model.GUID_ACCGROUP));
+            var creatingItem = new Identifier();//сюда надо собрать данные по идентификатору для последюущего обновления
+            var person = integServ.GetPerson(ClientState.SessionID, new Guid(model.GUID_PEP));// информация о пипле по его гуид
+
+            try
+            {
+                try
+                {
+                    
+
+                      {
+
+                        
+                        //открывю сессию редактирования                 
+                        var res = integServ.OpenPersonEditingSession(ClientState.SessionID, new Guid(model.GUID_PEP));
+
+                        if (res.Result != ClientState.Result_Success)
+                        {
+                            Logger.Log<ParsecService>("Error", $"123 Ошибка открытия сессии для редактирования пользователя. " +
+                                $"Ошибка {res.ErrorMessage}");
+                            var desc = $"123 Ошибка открытия сессии: {res.ErrorMessage}";
+                            state.desc = desc;
+                            state.IdCardindev = row.ID;
+                            state.Operation = StateService.GetOperationName(row.OPERATION);
+                            state.OperationCode = row.OPERATION;
+                            state.Status = "ERR";
+                            state.ErrorMessage = res.ErrorMessage;
+                            state.Attempts = row.ATTEMPS;
+                            state.Timestamp = DateTime.Now;
+                            state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
+                            state.ErrorCode = 7;
+                            state.keyNum = Key.keyNumber;
+                            return state;
+                        }
+
+                        var _editSessionID = res.Value;//сделал явную переменную гуид сессии редактироавния
+                        Logger.Log<ParsecService>("Warning", $"130 Вызываю метод GetAccessGroups с параметром model.GUID_ACCESS_GROUP  GUID: {model.GUID_ACCGROUP}");
+
+
+                        //!!!!!!!!!!!!!!!!!!!!вот! получение списка идентификатиоров для пипла
+                        var identifiers = integServ.GetPersonIdentifiers(ClientState.SessionID, new Guid(model.GUID_PEP));
+
+                        Logger.Log<ParsecService>("Warning", $"437 для {person.FIRST_NAME} GUID_PEP {model.GUID_PEP} найдено {identifiers.Count()} идентификаторов.");
+                        //для кажого идентификатора из списка
+                        foreach (var identifier in identifiers)
+                        {
+                            Logger.Log<ParsecService>("Warning", $"433 начал обработку карты {identifier.CODE}.");
+                            //далее задача сводится к формированию (обновлению) параметров 	identifier и последуюий вызов метод AddPersonIdentifier, 
+                            //который обновит данные для идентификтора				                  
+
+                            if (identifier != null)//на всякий случай, хотя он не может быть нулем. но пока оставлю
+                            {
+                                Logger.Log<ParsecService>("Warning", $"148 карте {identifier.CODE} начинаю присваивать категория доступа identifier.ACCGROUP_ID --> {identifier.ACCGROUP_ID}");
+
+                                creatingItem = identifier;//копирую текущие значения в новое обновление. Далее надо будет менять только категорию доступа
+
+                                //если не было категорий доступа, то добавляю ее                    
+                                if (identifier.ACCGROUP_ID == Guid.Empty)
+                                {
+                                    //creatingItem = identifier;
+                                    Logger.Log<ParsecService>("Warning", $"223 у карты {identifier.CODE} категории доступа не было, поэтому присваиваю identifier.ACCGROUP_ID --> {model.GUID_ACCGROUP}");
+                                    creatingItem.ACCGROUP_ID = new Guid(model.GUID_ACCGROUP);// меняю только категорию доступа
+                                   // creatingItem.IS_PRIMARY = true;
+                                    //creatingItem.CODE = identifier.CODE;
+                                    //все, обновленный 	набор данных готов, если был 	Guid.Empty				 
+                                }
+                                else
+                                {
+                                    Logger.Log<ParsecService>("Warning", $"291 у карты {identifier.CODE} уже была категории доступа identifier.ACCGROUP_ID --> {identifier.ACCGROUP_ID}");
+                                   
+                                    //получаю наследников
+                                    var arrayInheritedAccessGroups = integServ.GetInheritedAccessGroups(ClientState.SessionID, identifier.ACCGROUP_ID);
+                                    var inheritedAccessGroups = (arrayInheritedAccessGroups == null
+                                        ? new List<Guid>()
+                                        : arrayInheritedAccessGroups.ToList());
+
+                                    if (inheritedAccessGroups.Count == 0)
+                                        inheritedAccessGroups.Add(identifier.ACCGROUP_ID);
+
+                                    if (accesGroup != null && accesGroup.ID != Guid.Empty)
+                                        inheritedAccessGroups.Add(accesGroup.ID);
+
+                                    //получаю список уже выданных категорий доступа
+                                    inheritedAccessGroups = inheritedAccessGroups.Distinct().ToList();
+
+                                    Logger.Log<ParsecService>("Warning", $"471 Найдено уникальных групп доступа (количество) {inheritedAccessGroups.Count}");
+
+                                    //поиск если группы доступа есть в списке постояных - значит, у идентификатора была одна категория доступа.
+                                    var resCheckAccessGroups = CheckAccessGroups(inheritedAccessGroups);
+
+                                    Logger.Log<ParsecService>("Warning", $"173 Результат поиска группы доступа с такими же вложенными группами доступа {resCheckAccessGroups}");
+
+                                    if (resCheckAccessGroups != Guid.Empty)
+                                    {
+                                        creatingItem.ACCGROUP_ID = resCheckAccessGroups;
+                                    }
+                                    else
+                                    {
+                                        var schedules = integServ.GetAccessSchedules(ClientState.SessionID);
+
+                                        var newNameAccessGroup = string.Empty;
+                                        inheritedAccessGroups.ForEach(x =>
+                                        {
+                                            var ag = GetAccessGroups(x);
+                                            if (ag != null && !string.IsNullOrEmpty(ag.NAME))
+                                                newNameAccessGroup += $"{ag.NAME} ";
+                                        });
+
+                                        if (string.IsNullOrWhiteSpace(newNameAccessGroup))
+                                            newNameAccessGroup = "(Особая) Artsec";
+
+                                        var resCreateAccessGroup = integServ.CreateAccessGroup(
+                                            ClientState.SessionID,
+                                            newNameAccessGroup,
+                                            schedules[0].ID,
+                                            null);
+
+                                        if (resCreateAccessGroup.Result != ClientState.Result_Success)
+                                        {
+                                            var errorDesc = $"292 Ошибка CreateAccessGroup: {resCreateAccessGroup.ErrorMessage}";
+                                            Logger.Log<ParsecService>("Error", errorDesc);
+                                            state.desc = errorDesc;
+                                            state.IdCardindev = row.ID;
+                                            state.Operation = StateService.GetOperationName(row.OPERATION);
+                                            state.OperationCode = row.OPERATION;
+                                            state.Status = "ERR";
+                                            state.ErrorMessage = resCreateAccessGroup.ErrorMessage;
+                                            state.Attempts = row.ATTEMPS;
+                                            state.Timestamp = DateTime.Now;
+                                            state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
+                                            state.ErrorCode = 8;
+                                            state.keyNum = Key.keyNumber;
+                                            return state;
+                                        }
+
+                                        var rGuid = resCreateAccessGroup.Value;
+                                        integServ.SetInheritedAccessGroups(ClientState.SessionID, rGuid, inheritedAccessGroups.ToArray());
+                                        creatingItem.ACCGROUP_ID = rGuid;
+                                    }
+
+                                    //creatingItem.IS_PRIMARY = true;
+                                    //creatingItem.CODE = hexValue;
+                                }
+                            }
+                            else
+                            {
+                                if (!Guid.Empty.Equals(accesGroup.ID))
+                                    creatingItem.ACCGROUP_ID = accesGroup.ID;
+
+                               // creatingItem.IS_PRIMARY = true;
+                               // creatingItem.CODE = hexValue;
+                            }
+                        }
+
+                        Logger.Log<ParsecService>("Error", $"246 вызывад метод AddPersonIdentifier с параметрами: " +
+                            $"ACCGROUP_ID = {creatingItem.ACCGROUP_ID}" +
+                            $"PRIVILEGE_MASK = {creatingItem.PRIVILEGE_MASK}" +
+                            $"IDENTIFTYPE = {creatingItem.IDENTIFTYPE}" +
+                            $"NAME = {creatingItem.NAME}" +
+                            $"CODE = {creatingItem.CODE}" +
+                            $"PERSON_ID = {creatingItem.PERSON_ID}" +
+                            $"IS_PRIMARY = {creatingItem.IS_PRIMARY}"
+                            );
+
+                       /* var resAddPersonIdentifier = integServ.AddPersonIdentifier(_editSessionID, creatingItem);
+                        Logger.Log<ParsecService>("Error", $"252 Результа выполнения AddPersonIdentifier: {resAddPersonIdentifier.Result}.");
+                        if (resAddPersonIdentifier.Result != ClientState.Result_Success)
+                        {
+                            var errorDesc = $"232 Ошибка при добавлении группы доступа пользователю. Ошибка: {resAddPersonIdentifier.ErrorMessage}";
+                            Logger.Log<ParsecService>("Error", errorDesc);
+                            state.desc = errorDesc;
+                            state.IdCardindev = row.ID;
+                            state.Operation = StateService.GetOperationName(row.OPERATION);
+                            state.OperationCode = row.OPERATION;
+                            state.Status = "ERR";
+                            state.ErrorMessage = resAddPersonIdentifier.ErrorMessage;
+                            state.Attempts = row.ATTEMPS;
+                            state.Timestamp = DateTime.Now;
+                            state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
+                            state.ErrorCode = 2;
+                            state.keyNum = Key.keyNumber;
+                            return state;
+                        }
+                       */
+                        Logger.Log<ParsecService>("Warning", $"238 Группа доступа успешно добавлена | " +
+                           $"code: {row.ID_CARD} (hex: {creatingItem.CODE}) " +
+                           $"Пользователю ФИО (parsec): {person.FIRST_NAME} {person.MIDDLE_NAME} {person.LAST_NAME}");
+
+                        state.desc = "Операция выполнена успешно";
+                        state.IdCardindev = row.ID;
+                        state.Operation = StateService.GetOperationName(row.OPERATION);
+                        state.OperationCode = row.OPERATION;
+                        state.Status = "OK";
+                        state.Attempts = row.ATTEMPS;
+                        state.Timestamp = DateTime.Now;
+                        state.keyNum = Key.keyNumber;
+                        return state;
+                    }
+            
+                }
+                catch (Exception ex)
+                {
+                    DatabaseService.IncrementAttemp(row);
+                    var errorDesc = $"587 Ошибка в AddIdentifierPeople (внутренний catch): {ex.Message}";
+                    Logger.Log<ParsecService>("Warning", $"{errorDesc} | {ex.Source} | {ex.StackTrace} | {ex.Data}");
+                    state.desc = errorDesc;
+                    state.IdCardindev = row.ID;
+                    state.Operation = StateService.GetOperationName(row.OPERATION);
+                    state.OperationCode = row.OPERATION;
+                    state.Status = "ERR";
+                    state.ErrorMessage = ex.Message?.Replace("\r\n", " ") ?? "Unknown error";
+                    state.Attempts = row.ATTEMPS;
+                    state.Timestamp = DateTime.Now;
+                    state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
+                    state.ErrorCode = 9;
+                    state.keyNum = Key.keyNumber;
+                    return state;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                var errorDesc = $"263 Ошибка в AddIdentifierPeople (внешний catch): {ex.Message}";
+                DatabaseService.IncrementAttemp(row);
+                Logger.Log<ParsecService>("Warning", $"{errorDesc} | {ex.Source} | {ex.StackTrace} | {ex.Data}");
+                state.desc = errorDesc;
+                state.IdCardindev = row.ID;
+                state.Operation = StateService.GetOperationName(row.OPERATION);
+                state.OperationCode = row.OPERATION;
+                state.Status = "ERR";
+                state.ErrorMessage = ex.Message?.Replace("\r\n", " ") ?? "Unknown error";
+                state.Attempts = row.ATTEMPS;
+                state.Timestamp = DateTime.Now;
+                state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
+                state.ErrorCode = 9;
+                state.keyNum = Key.keyNumber;
+                return state;
+            }
+        }
+
 
         /// <summary>
         /// Основная логика добавления идентификатора

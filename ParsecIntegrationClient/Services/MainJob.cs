@@ -19,6 +19,7 @@ namespace ParsecIntegrationClient.Services
         public static void Execute()
         {
             Logger.Log<MainJob>("Warning", "21 ЗАПУСК ОБРАБОТКИ ЗАДАЧ");
+            Logger.Log<MainJob>("Warning", $"22 ГЛОБАЛЬНЫЙ ТАЙМАУТ {SettingsService.DatabaseJobTimeout} секунд");
             var state = new State();
             // Проверка лицензии перед началом обработки
             if (!License.CanPerformOperation())
@@ -36,7 +37,7 @@ namespace ParsecIntegrationClient.Services
                 StateService.SaveState(state);
 
                 Logger.Log<MainJob>("Warning", $"Ожидание {SettingsService.ErrorTimeoutMinutes} минут перед следующей попыткой проверки лицензии");
-                System.Threading.Thread.Sleep(SettingsService.ErrorTimeoutMinutes * 60 * 1000);
+              //  System.Threading.Thread.Sleep(SettingsService.ErrorTimeoutMinutes * 60 * 1000);
                 return;
             }
 
@@ -57,7 +58,7 @@ namespace ParsecIntegrationClient.Services
                 StateService.SaveState(state);
                 Logger.Log<MainJob>("Warning", "Задач для обработки не найдено");
                 Logger.Log<MainJob>("Warning", $"Ожидание {SettingsService.ErrorTimeoutMinutes} минут перед следующей попыткой");
-                System.Threading.Thread.Sleep(SettingsService.ErrorTimeoutMinutes * 60 * 1000);
+            //    System.Threading.Thread.Sleep(SettingsService.ErrorTimeoutMinutes * 60 * 1000);
                 return;
             }
 
@@ -236,7 +237,7 @@ namespace ParsecIntegrationClient.Services
                             }
                         case "7": //Добавление категории доступа
                             {
-                                result = ParsecService.AddIdentifierPeople(row);
+                                result = ParsecService.AddAccGroupPeople(row);
                                 break;
                             }
                         case "8": //Удаление категории доступа
@@ -311,7 +312,7 @@ namespace ParsecIntegrationClient.Services
             {
                 Logger.Log<MainJob>("Warning", "Нет новых задач для обработки");
                 Logger.Log<MainJob>("Warning", $"Ожидание {SettingsService.ErrorTimeoutMinutes} минут перед следующей попыткой");
-                System.Threading.Thread.Sleep(SettingsService.ErrorTimeoutMinutes * 60 * 1000);
+             //   System.Threading.Thread.Sleep(SettingsService.ErrorTimeoutMinutes * 60 * 1000);
             }
         }
     }
