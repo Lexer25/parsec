@@ -277,7 +277,7 @@ namespace ParsecIntegrationClient.Services
         }
 
         /// <summary>
-        /// !!! Основная логика добавления категории доступа идентификаторам
+        /// Основная логика добавления категории доступа идентификаторам
         /// </summary>
         private static State ProcessAccessCatAddition(DbModelRowIDInDev row, DbModelAddAccessCategory model)
         {
@@ -286,165 +286,213 @@ namespace ParsecIntegrationClient.Services
             var accesGroup = GetAccessGroups(accessGroupGuid);
             var person = integServ.GetPerson(ClientState.SessionID, new Guid(model.GUID_PEP));
 
+            if (person == null)
+            {
+                Logger.Log<ParsecService>("Warning", $"Пользователь с GUID: {model.GUID_PEP} не найден в Parsec");
+                return CreateSuccessState(row, "Пользователь не найден в Parsec");
+            }
+
+            // Открываем сессию редактирования
+            var sessionResult = integServ.OpenPersonEditingSession(ClientState.SessionID, new Guid(model.GUID_PEP));
+            if (sessionResult.Result != ClientState.Result_Success)
+            {
+                var errorMsg = $"Ошибка открытия сессии редактирования: {sessionResult.ErrorMessage}";
+                Logger.Log<ParsecService>("Error", errorMsg);
+                return CreateErrorState(row, errorMsg, 7);
+            }
+
+            var editSessionID = sessionResult.Value;
+
             try
             {
-                // Открываю сессию редактирования                 
-                var res = integServ.OpenPersonEditingSession(ClientState.SessionID, new Guid(model.GUID_PEP));
-
-                if (res.Result != ClientState.Result_Success)
-                {
-                    Logger.Log<ParsecService>("Error", $"123 Ошибка открытия сессии для редактирования пользователя. Ошибка {res.ErrorMessage}");
-                    var desc = $"123 Ошибка открытия сессии: {res.ErrorMessage}";
-                    return CreateErrorState(row, desc, 7);
-                }
-
-                var _editSessionID = res.Value;
-                Logger.Log<ParsecService>("Warning", $"130 Вызываю метод GetAccessGroups с параметром model.GUID_ACCESS_GROUP GUID: {model.GUID_ACCGROUP}");
-
-                // Получение списка идентификаторов для пипла
+                // Получаем идентификаторы пользователя
                 var identifiers = integServ.GetPersonIdentifiers(ClientState.SessionID, new Guid(model.GUID_PEP));
-
                 if (identifiers == null || identifiers.Length == 0)
                 {
-                    Logger.Log<ParsecService>("Warning", $"Для {person?.FIRST_NAME} GUID_PEP {model.GUID_PEP} идентификаторы не найдены");
-                    return CreateSuccessState(row, $"Идентификаторы не найдены для пользователя {person?.FIRST_NAME}");
+                    Logger.Log<ParsecService>("Warning", $"У пользователя {person.FIRST_NAME} нет идентификаторов");
+                    return CreateSuccessState(row, "Идентификаторы не найдены");
                 }
 
-                Logger.Log<ParsecService>("Warning", $"437 для {person?.FIRST_NAME} GUID_PEP {model.GUID_PEP} найдено {identifiers.Length} идентификаторов.");
+                Logger.Log<ParsecService>("Info", $"Найдено {identifiers.Length} идентификаторов для {person.FIRST_NAME}");
 
-                // Для каждого идентификатора из списка
+                // Обрабатываем каждый идентификатор
                 foreach (var identifier in identifiers)
                 {
-                    Logger.Log<ParsecService>("Warning", $"433 начал обработку карты {identifier.CODE}.");
-
-                    var creatingItem = identifier; // копирую текущие значения
-
-                    // Если не было категорий доступа, то добавляю ее                    
-                    if (identifier.ACCGROUP_ID == Guid.Empty)
-                    {
-                        Logger.Log<ParsecService>("Warning", $"223 у карты {identifier.CODE} категории доступа не было, поэтому присваиваю identifier.ACCGROUP_ID --> {model.GUID_ACCGROUP}");
-                        creatingItem.ACCGROUP_ID = accessGroupGuid;
-                    }
-                    else
-                    {
-                        Logger.Log<ParsecService>("Warning", $"291 у карты {identifier.CODE} уже была категория доступа identifier.ACCGROUP_ID --> {identifier.ACCGROUP_ID}. Значит, проверяю ее состав.");
-
-                        // Получаю наследников
-                        var arrayInheritedAccessGroups = integServ.GetInheritedAccessGroups(ClientState.SessionID, identifier.ACCGROUP_ID);
-                        var inheritedAccessGroups = (arrayInheritedAccessGroups == null
-                            ? new List<Guid>()
-                            : arrayInheritedAccessGroups.ToList());
-
-                        if (inheritedAccessGroups.Count == 0)
-                            inheritedAccessGroups.Add(identifier.ACCGROUP_ID);
-
-                        if (accesGroup != null && accesGroup.ID != Guid.Empty)
-                            inheritedAccessGroups.Add(accesGroup.ID);
-
-                        inheritedAccessGroups = inheritedAccessGroups.Distinct().ToList();
-
-                        Logger.Log<ParsecService>("Warning", $"471 Найдено уникальных групп доступа (количество) {inheritedAccessGroups.Count}");
-
-                        // Поиск, если группы доступа есть в списке постоянных
-                        var resCheckAccessGroups = CheckAccessGroups(inheritedAccessGroups);
-
-                        Logger.Log<ParsecService>("Warning", $"173 Результат поиска группы доступа с такими же вложенными группами доступа {resCheckAccessGroups}");
-
-                        if (resCheckAccessGroups != Guid.Empty)
-                        {
-                            creatingItem.ACCGROUP_ID = resCheckAccessGroups;
-                        }
-                        else
-                        {
-                            var schedules = integServ.GetAccessSchedules(ClientState.SessionID);
-
-                            if (schedules == null || schedules.Length == 0)
-                            {
-                                var errorDesc = "Нет доступных расписаний для создания группы доступа";
-                                Logger.Log<ParsecService>("Error", errorDesc);
-                                return CreateErrorState(row, errorDesc, 8);
+                    //ProcessSingleIdentifier(identifier, accesGroup, accessGroupGuid, integServ, row);
+                    ProcessSingleIdentifier(
+                           identifier,
+                           accesGroup,
+                           accessGroupGuid,
+                           editSessionID,  // ← Передаем ID сессии
+                           integServ,
+                           row);
                             }
-
-                            var newNameAccessGroup = string.Empty;
-                            inheritedAccessGroups.ForEach(x =>
-                            {
-                                var ag = GetAccessGroups(x);
-                                if (ag != null && !string.IsNullOrEmpty(ag.NAME))
-                                    newNameAccessGroup += $"{ag.NAME} ";
-                            });
-
-                            if (string.IsNullOrWhiteSpace(newNameAccessGroup))
-                                newNameAccessGroup = "(Особая) Artsec";
-
-                            // Ограничиваем длину имени
-                            if (newNameAccessGroup.Length > 255)
-                                newNameAccessGroup = newNameAccessGroup.Substring(0, 252) + "...";
-
-                            var resCreateAccessGroup = integServ.CreateAccessGroup(
-                                ClientState.SessionID,
-                                newNameAccessGroup,
-                                schedules[0].ID,
-                                null);
-
-                            if (resCreateAccessGroup.Result != ClientState.Result_Success)
-                            {
-                                var errorDesc = $"292 Ошибка CreateAccessGroup: {resCreateAccessGroup.ErrorMessage}";
-                                Logger.Log<ParsecService>("Error", errorDesc);
-                                return CreateErrorState(row, errorDesc, 8);
-                            }
-
-                            var rGuid = resCreateAccessGroup.Value;
-                            integServ.SetInheritedAccessGroups(ClientState.SessionID, rGuid, inheritedAccessGroups.ToArray());
-                            creatingItem.ACCGROUP_ID = rGuid;
-                        }
-                    }
-
-                    // Обновляю идентификатор
-                    Logger.Log<ParsecService>("Error", $"246 вызываю метод AddPersonIdentifier с параметрами: " +
-                        $"ACCGROUP_ID = {creatingItem.ACCGROUP_ID} " +
-                        $"PRIVILEGE_MASK = {creatingItem.PRIVILEGE_MASK} " +
-                        $"IDENTIFTYPE = {creatingItem.IDENTIFTYPE} " +
-                        $"NAME = {creatingItem.NAME} " +
-                        $"CODE = {creatingItem.CODE} " +
-                        $"PERSON_ID = {creatingItem.PERSON_ID} " +
-                        $"IS_PRIMARY = {creatingItem.IS_PRIMARY}");
-
-                    var resAddPersonIdentifier = integServ.AddPersonIdentifier(_editSessionID, creatingItem);
-                    Logger.Log<ParsecService>("Error", $"252 Результат выполнения AddPersonIdentifier: {resAddPersonIdentifier.Result}.");
-
-                    if (resAddPersonIdentifier.Result != ClientState.Result_Success)
-                    {
-                        var errorDesc = $"232 Ошибка при добавлении группы доступа пользователю. Ошибка: {resAddPersonIdentifier.ErrorMessage}";
-                        Logger.Log<ParsecService>("Error", errorDesc);
-                        return CreateErrorState(row, errorDesc, 2);
-                    }
-
-                    Logger.Log<ParsecService>("Warning", $"238 Группа доступа успешно добавлена | " +
-                        $"code: {row.ID_CARD} (hex: {creatingItem.CODE}) " +
-                        $"Пользователю ФИО (parsec): {person?.FIRST_NAME} {person?.MIDDLE_NAME} {person?.LAST_NAME}");
-                }
-
-                // Закрываем сессию редактирования
-                try
-                {
-                    integServ.ClosePersonEditingSession(_editSessionID);
-                    Logger.Log<ParsecService>("Info", $"Сессия редактирования {_editSessionID} закрыта");
-                }
-                catch (Exception ex)
-                {
-                    Logger.Log<ParsecService>("Warning", $"Ошибка при закрытии сессии: {ex.Message}");
-                }
 
                 return CreateSuccessState(row, "Операция выполнена успешно");
             }
-            catch (Exception ex)
+            finally
             {
-                DatabaseService.IncrementAttemp(row);
-                var errorDesc = $"587 Ошибка в ProcessAccessCatAddition: {ex.Message}";
-                Logger.Log<ParsecService>("Warning", $"{errorDesc} | {ex.Source} | {ex.StackTrace}");
-                return CreateErrorState(row, errorDesc, 9);
+                CloseEditingSession(integServ, editSessionID);
             }
         }
+
+        /// <summary>
+        /// Обработка одного идентификатора
+        /// </summary>
+        private static void ProcessSingleIdentifier(
+            Identifier identifier,
+            AccessGroup accesGroup,
+            Guid accessGroupGuid,
+            Guid editSessionID,
+            IntegrationService integServ,
+            DbModelRowIDInDev row)
+        {
+            Logger.Log<ParsecService>("Info", $"Обработка карты {identifier.CODE}");
+
+            // Создаем копию для обновления
+            var updatedIdentifier = identifier;
+
+            // Определяем новую группу доступа
+            var newGroupId = DetermineAccessGroup(identifier, accesGroup, accessGroupGuid, integServ);
+
+            // Обновляем идентификатор
+            updatedIdentifier.ACCGROUP_ID = newGroupId;
+
+            // Логируем обновление
+            Logger.Log<ParsecService>("Info", $"Обновление идентификатора: CODE={updatedIdentifier.CODE}, ACCGROUP_ID={updatedIdentifier.ACCGROUP_ID}");
+
+            // Вызываем метод обновления
+            var result = integServ.AddPersonIdentifier(editSessionID, updatedIdentifier);
+
+            if (result.Result != ClientState.Result_Success)
+            {
+                throw new InvalidOperationException($"Ошибка обновления идентификатора: {result.ErrorMessage}");
+            }
+        }
+
+        /// <summary>
+        /// Определение группы доступа для идентификатора
+        /// </summary>
+        private static Guid DetermineAccessGroup(
+            Identifier identifier,
+            AccessGroup targetGroup,
+            Guid targetGroupId,
+            IntegrationService integServ)
+        {
+            // Если у идентификатора нет группы - просто назначаем целевую
+            if (identifier.ACCGROUP_ID == Guid.Empty)
+            {
+                Logger.Log<ParsecService>("Info", $"У карты {identifier.CODE} нет группы, назначаем {targetGroupId}");
+                return targetGroupId;
+            }
+
+            // Формируем цепочку наследования
+            var inheritedChain = BuildInheritedChain(identifier.ACCGROUP_ID, targetGroupId, integServ);
+
+            // Ищем существующую группу с такой цепочкой
+            var existingGroup = CheckAccessGroups(inheritedChain);
+            if (existingGroup != Guid.Empty)
+            {
+                Logger.Log<ParsecService>("Info", $"Найдена существующая группа {existingGroup}");
+                return existingGroup;
+            }
+
+            // Создаем новую группу
+            return CreateAccessGroupWithInheritance(inheritedChain, integServ);
+        }
+
+        /// <summary>
+        /// Формирование цепочки наследования
+        /// </summary>
+        private static List<Guid> BuildInheritedChain(Guid currentGroupId, Guid targetGroupId, IntegrationService integServ)
+        {
+            var inheritedGroups = integServ.GetInheritedAccessGroups(ClientState.SessionID, currentGroupId)?.ToList()
+                                  ?? new List<Guid>();
+
+            if (!inheritedGroups.Any())
+                inheritedGroups.Add(currentGroupId);
+
+            inheritedGroups.Add(targetGroupId);
+
+            return inheritedGroups.Distinct().ToList();
+        }
+
+        /// <summary>
+        /// Создание группы доступа с цепочкой наследования
+        /// </summary>
+        private static Guid CreateAccessGroupWithInheritance(List<Guid> inheritedChain, IntegrationService integServ)
+        {
+            // Получаем расписание
+            var schedules = integServ.GetAccessSchedules(ClientState.SessionID);
+            if (schedules == null || schedules.Length == 0)
+                throw new InvalidOperationException("Нет доступных расписаний");
+
+            // Формируем имя
+            var groupName = BuildGroupName(inheritedChain, integServ);
+
+            // Создаем группу
+            var createResult = integServ.CreateAccessGroup(
+                ClientState.SessionID,
+                groupName,
+                schedules[0].ID,
+                null);
+
+            if (createResult.Result != ClientState.Result_Success)
+                throw new InvalidOperationException($"Ошибка создания группы: {createResult.ErrorMessage}");
+
+            var newGroupId = createResult.Value;
+
+            // Устанавливаем наследование
+            integServ.SetInheritedAccessGroups(ClientState.SessionID, newGroupId, inheritedChain.ToArray());
+
+            Logger.Log<ParsecService>("Info", $"Создана группа {groupName} с цепочкой из {inheritedChain.Count} групп");
+
+            return newGroupId;
+        }
+
+        /// <summary>
+        /// Формирование имени группы доступа на основе цепочки наследования
+        /// </summary>
+        private static string BuildGroupName(List<Guid> inheritedChain, IntegrationService integServ)
+        {
+            // Собираем имена групп из цепочки
+            var groupNames = inheritedChain
+                .Select(groupId => GetAccessGroups(groupId)?.NAME)
+                .Where(groupName => !string.IsNullOrEmpty(groupName))
+                .ToList();
+
+            // Формируем результирующее имя
+            var resultName = groupNames.Any()
+                ? string.Join(" + ", groupNames)
+                : "(Особая) Artsec";
+
+            // Ограничиваем длину
+            if (resultName.Length > 255)
+            {
+                resultName = resultName.Substring(0, 252) + "...";
+            }
+
+            Logger.Log<ParsecService>("Info", $"Сформировано имя группы: {resultName}");
+
+            return resultName;
+        }
+
+        /// <summary>
+        /// Закрытие сессии редактирования
+        /// </summary>
+        private static void CloseEditingSession(IntegrationService integServ, Guid sessionId)
+        {
+            try
+            {
+                integServ.ClosePersonEditingSession(sessionId);
+                Logger.Log<ParsecService>("Info", $"Сессия {sessionId} закрыта");
+            }
+            catch (Exception ex)
+            {
+                Logger.Log<ParsecService>("Warning", $"Ошибка при закрытии сессии: {ex.Message}");
+            }
+        }
+
         /// <summary>
         /// Основная логика добавления идентификатора
         /// </summary>
