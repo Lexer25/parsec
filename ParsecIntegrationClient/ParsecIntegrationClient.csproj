@@ -251,6 +251,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\DBModelAddAccGroup.cs" />
     <Compile Include="Models\Key.cs" />
     <Compile Include="Models\ClientState.cs" />
     <Compile Include="Models\DbModelAddCard.cs" />
