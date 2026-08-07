@@ -1,3 +1,7 @@
 *.pdf
 *.docx
 .vs
+/ParsecIntegrationClient/bin/
+/ParsecIntegrationClient/obj/
+/ParsecIntegrationClient/Tests1/
+/ParsecIntegrationClient/Tests/
