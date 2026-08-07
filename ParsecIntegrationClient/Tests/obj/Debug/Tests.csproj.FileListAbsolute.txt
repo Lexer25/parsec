@@ -1,2 +1,0 @@
-C:\ParsecIntegrationClinet_Service-main\Tests\obj\Debug\Tests.csproj.AssemblyReference.cache
-C:\ParsecIntegrationClinet_Service-main\Tests\obj\Debug\Tests.csproj.CoreCompileInputs.cache
