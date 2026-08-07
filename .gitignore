@@ -5,3 +5,6 @@
 /ParsecIntegrationClient/obj/
 /ParsecIntegrationClient/Tests1/
 /ParsecIntegrationClient/Tests/
+Tests1/bin/
+Tests1/obj/
+packages/
