@@ -1626,7 +1626,7 @@ namespace ParsecIntegrationClient.Services
         public static State SavePerson(DbModelRowIDInDev row)
         {
             var state = new State();
-            Logger.Log<ParsecService>("Error", $"1629 start AddPeople {row.ID}");
+            Logger.Log<ParsecService>("Error", $"1629 start SavePerson {row.ID}");
             string komuName = null;
            
             try
@@ -2035,7 +2035,8 @@ namespace ParsecIntegrationClient.Services
                 if (result.Result != ClientState.Result_Success)
                 {
                     state.ErrorCode = 22;
-                    Logger.Log<ParsecService>("Error", $"2034 КОД ОШИБКИ: {state.ErrorCode}. {result.ErrorMessage}");
+                    Logger.Log<ParsecService>("Error", $"2038 ClientState.SessionID {ClientState.SessionID}, model.GUID {model.GUID}");
+                    Logger.Log<ParsecService>("Error", $"2039 КОД ОШИБКИ: {state.ErrorCode}. {result.ErrorMessage}");
                     state.desc = $"2035 Ошибка при добавлении организации: {result.ErrorMessage}";
                     state.IdCardindev = row.ID;
                     state.Operation = StateService.GetOperationName(row.OPERATION);
