@@ -1466,6 +1466,11 @@ namespace ParsecIntegrationClient.Services
             }
         }
 
+        /// <summary>
+        /// Добавление пипла
+        /// </summary>
+        /// <param name="row"></param>
+        /// <returns></returns>
         public static State AddPeople(DbModelRowIDInDev row)
         {
             var state = new State();
@@ -1613,6 +1618,162 @@ namespace ParsecIntegrationClient.Services
             }
         }
 
+       /// <summary>
+        /// обновление пипла (уже существующего)
+        /// </summary>
+        /// <param name="row"></param>
+        /// <returns></returns>
+        public static State SavePerson(DbModelRowIDInDev row)
+        {
+            var state = new State();
+            Logger.Log<ParsecService>("Error", $"1629 start AddPeople {row.ID}");
+            string komuName = null;
+           
+            try
+            {
+                var query = "select p.id_pep, p.guid as guid_pep, " +
+                    "o.guid as guid_org, p.name, p.surname, p.patronymic, p.tabnum, o.name as org_name " +
+                    "from people p " +
+                    "left join organization o on p.id_org=o.id_org " +
+                    $"where p.id_pep={row.ID_PEP};";
+                Logger.Log<ParsecService>("Error", $"1639 {query}");
+
+                var people = DatabaseService.Get<DbModelAddPeople>(query);
+                komuName = DatabaseService.GetString(
+    $"select coalesce(p.surname,'') || ' ' || coalesce(p.name,'') || ' ' || coalesce(p.patronymic,'') from people p where p.id_pep = {people.ID_PEP}");
+
+                if (people != null)
+                {
+                    var person = new Person()
+                    {
+                        ID = new Guid(people.GUID_PEP),
+                        FIRST_NAME = people.NAME,
+                        LAST_NAME = people.SURNAME,
+                        MIDDLE_NAME = people.PATRONYMIC,
+                        TAB_NUM = people.TABNUM,
+                        ORG_ID = new Guid(people.GUID_ORG),
+                    };
+
+                    Logger.Log<ParsecService>("Info", $"1657 обновляется сотрудник {Newtonsoft.Json.JsonConvert.SerializeObject(person)}");
+
+                    if (!CheckGuidePresent(person.ID))
+                    {
+                        state.ErrorCode = 18;
+                        var desc = $"1612 КОД ОШИБКИ: {state.ErrorCode}. Нет сотрудника с GUID {person.ID} для обновления. Работаю завершаю.";
+                        var errorMessage = $" 1134 Ошибка: сотрудник для обнолвления с GUID {person.ID} не существует в Parsec";
+                        Logger.Log<ParsecService>("Warning", desc);
+                        state.desc = desc;
+                        state.IdCardindev = row.ID;
+                        state.Operation = StateService.GetOperationName(row.OPERATION);
+                        state.OperationCode = row.OPERATION;
+                        state.Status = "ERR";
+                        state.ErrorMessage = errorMessage;
+                        state.Attempts = row.ATTEMPS;
+                        state.Timestamp = DateTime.Now;
+                        state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
+                        state.keyNum = Key.keyNumber;
+                        Logger.Log<ParsecService>("Error", $"1148 stop AddPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+                        return state;
+                    }
+                    Logger.Log<ParsecService>("Warning", $"1678 Сотрудник для обновления с GUID {person.ID} (ФИО: {komuName}) имеется в Парсек. Продолжаю обновление сотрудника.");
+
+                    if (!CheckGuidePresent(person.ORG_ID))
+                    {
+                        var desc = $"560 НЕ существует организация {people.ORG_NAME} с указанным GUID {person.ORG_ID} в Парсек. Работаю завершаю.";
+                        var errorMessage = $"1158 Ошибка: организация не найдена в Parsec (GUID: {person.ORG_ID})";
+                        Logger.Log<ParsecService>("Warning", desc);
+                        state.desc = desc;
+                        state.IdCardindev = row.ID;
+                        state.Operation = StateService.GetOperationName(row.OPERATION);
+                        state.OperationCode = row.OPERATION;
+                        state.Status = "ERR";
+                        state.ErrorMessage = errorMessage;
+                        state.Attempts = row.ATTEMPS;
+                        state.Timestamp = DateTime.Now;
+                        state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
+                        state.ErrorCode = 19;
+                        state.keyNum = Key.keyNumber;
+                        Logger.Log<ParsecService>("Error", $"1172 stop AddPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+                        return state;
+                    }
+                    Logger.Log<ParsecService>("Info", $"1176 Существует организаци с указанным  GUID {Newtonsoft.Json.JsonConvert.SerializeObject(person)}. Продолжаю добавление сотрудника.");
+
+                    var integServ = new IntegrationService();
+                    //var sessionResult = integServ.OpenPersonEditingSession(ClientState.SessionID, new Guid(model.GUID_PEP));
+                    
+                    var sessionResult = integServ.OpenPersonEditingSession(ClientState.SessionID, new Guid(people.GUID_PEP));
+
+                    var res = integServ.SavePerson(sessionResult.Value, person);
+
+                    if (res.Result != ClientState.Result_Success)
+                    {
+                        Logger.Log<ParsecService>("Error", $"1706 не смог обновить сотрудника {Newtonsoft.Json.JsonConvert.SerializeObject(person)}");
+                        Logger.Log<ParsecService>("Error", $"1707 {res.ErrorMessage}");
+                        state.desc = $"1708 Ошибка при обновлении сотрудника: {res.ErrorMessage}";
+                        state.IdCardindev = row.ID;
+                        state.Operation = StateService.GetOperationName(row.OPERATION);
+                        state.OperationCode = row.OPERATION;
+                        state.Status = "ERR";
+                        state.ErrorMessage = res.ErrorMessage;
+                        state.Attempts = row.ATTEMPS;
+                        state.Timestamp = DateTime.Now;
+                        state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
+                        state.ErrorCode = 1;
+                        state.keyNum = Key.keyNumber;
+                        Logger.Log<ParsecService>("Error", $"1719 stop SavePerson {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+                        return state;
+                    }
+
+                    Logger.Log<ParsecService>("Info", $"1723 Пользователь обновлен успешно {Newtonsoft.Json.JsonConvert.SerializeObject(person)}");
+                    state.desc = "Пользователь обновлен успешно";
+                    state.IdCardindev = row.ID;
+                    state.Operation = StateService.GetOperationName(row.OPERATION);
+                    state.OperationCode = row.OPERATION;
+                    state.Status = "OK";
+                    state.Attempts = row.ATTEMPS;
+                    state.Timestamp = DateTime.Now;
+                    state.keyNum = Key.keyNumber;
+                    Logger.Log<ParsecService>("Error", $"1732 stop SavePerson {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+                    return state;
+                }
+
+                var descNotFound = $"1736 Пользователь с {row.ID_PEP} не найден в базе СКУД Артонит.";
+                Logger.Log<ParsecService>("Warning", descNotFound);
+                state.desc = descNotFound;
+                state.IdCardindev = row.ID;
+                state.Operation = StateService.GetOperationName(row.OPERATION);
+                state.OperationCode = row.OPERATION;
+                state.Status = "ERR";
+                state.ErrorMessage = $"1743мОшибка БД: пользователь с ID_PEP={row.ID_PEP} не найден в базе СКУД";
+                state.Attempts = row.ATTEMPS;
+                state.Timestamp = DateTime.Now;
+                state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
+                state.ErrorCode = 10;
+                state.keyNum = Key.keyNumber;
+                Logger.Log<ParsecService>("Error", $"1749 stop AddPeople {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+                return state;
+            }
+            catch (Exception ex)
+            {
+                var errorDesc = $"1754 Пользователя ID_pep={row.ID_PEP} нет в базе данных СКУД";
+                Logger.Log<ParsecService>("Warning", errorDesc);
+                state.desc = errorDesc;
+                state.IdCardindev = row.ID;
+                state.Operation = StateService.GetOperationName(row.OPERATION);
+                state.OperationCode = row.OPERATION;
+                state.Status = "ERR";
+                var cleanErrorMessage = string.Join(" ", ex.Message.Split(new[] { '\r', '\n', '\t' }, StringSplitOptions.RemoveEmptyEntries));
+                state.ErrorMessage = cleanErrorMessage;
+                state.Attempts = row.ATTEMPS;
+                state.Timestamp = DateTime.Now;
+                state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
+                state.ErrorCode = 10;
+                state.keyNum = Key.keyNumber;
+                Logger.Log<ParsecService>("Error", $"1768 stop SavePerson {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+                return state;
+            }
+        }
+
         public static State RemovePeople(DbModelRowIDInDev row)
         {
             var state = new State();
@@ -1715,7 +1876,11 @@ namespace ParsecIntegrationClient.Services
                 throw;
             }
         }
-
+        /// <summary>
+        /// ДОбавление организации
+        /// </summary>
+        /// <param name="row"></param>
+        /// <returns></returns>
         public static State AddOrg(DbModelRowIDInDev row)
         {
             var state = new State();
@@ -1811,6 +1976,110 @@ namespace ParsecIntegrationClient.Services
                 state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
                 state.keyNum = Key.keyNumber;
                 Logger.Log<ParsecService>("Error", $"1451 stop AddOrg {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+                throw;
+            }
+        }
+
+         /// <summary>
+        /// Обновление организации
+        /// </summary>
+        /// <param name="row"></param>
+        /// <returns></returns>
+        public static State SaveOrgUnit(DbModelRowIDInDev row)
+        {
+            var state = new State();
+            Logger.Log<ParsecService>("Error", $"1987 start SaveOrgUnit {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+            try
+            {
+                var query = "select o.guid as guide_for_add, " +
+                    "o2.guid as guid_for_parent, o.name, o.divcode, o.id_org from organization o " +
+                    "join organization o2 on o2.id_org=o.id_parent " +
+                    $"where o.guid='{row.ID_CARD}'";
+
+                var model = DatabaseService.Get<DbModelAddOrg>(query);
+
+                Logger.Log<ParsecService>("Warning", $"1997 Обновление организации |" +
+                    $" NAME: {model.NAME} DIVCODE: {model.DIVCODE}");
+
+                if (model.NAME == null)
+                {
+                    state.ErrorCode = 21;
+                    var desc = $"2003 Организация {row.ID_CARD} для обновления не найдена";
+                    var errorMessage = $"2004 КОД ОШИБКИ: {state.ErrorCode}. Ошибка БД: организация с GUID={row.ID_CARD} не найдена в базе СКУД";
+                    Logger.Log<ParsecService>("Error", desc);
+                    state.desc = desc;
+                    state.IdCardindev = row.ID;
+                    state.Operation = StateService.GetOperationName(row.OPERATION);
+                    state.OperationCode = row.OPERATION;
+                    state.Status = "ERR";
+                    state.ErrorMessage = errorMessage;
+                    state.Attempts = row.ATTEMPS;
+                    state.Timestamp = DateTime.Now;
+                    state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
+                    state.keyNum = Key.keyNumber;
+                    Logger.Log<ParsecService>("Error", $"2016 stop AddOrg {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+                    return state;
+                }
+
+                var integServ = new IntegrationService();
+
+                var org = new OrgUnit()
+                {
+                    NAME = model.NAME,
+                    ID = new Guid(model.GUID),
+                    PARENT_ID = new Guid(model.GUID_PARENT),
+                    DESC = ""
+                };
+                var sessionResult = integServ.OpenOrgUnitEditingSession(ClientState.SessionID, new Guid(model.GUID));
+                var result = integServ.SaveOrgUnit(sessionResult.Value, org);
+                if (result.Result != ClientState.Result_Success)
+                {
+                    state.ErrorCode = 22;
+                    Logger.Log<ParsecService>("Error", $"2034 КОД ОШИБКИ: {state.ErrorCode}. {result.ErrorMessage}");
+                    state.desc = $"2035 Ошибка при добавлении организации: {result.ErrorMessage}";
+                    state.IdCardindev = row.ID;
+                    state.Operation = StateService.GetOperationName(row.OPERATION);
+                    state.OperationCode = row.OPERATION;
+                    state.Status = "ERR";
+                    state.ErrorMessage = result.ErrorMessage;
+                    state.Attempts = row.ATTEMPS;
+                    state.Timestamp = DateTime.Now;
+                    state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
+                    state.keyNum = Key.keyNumber;
+                    Logger.Log<ParsecService>("Error", $"2045 stop AddOrg {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+                    return state;
+                }
+
+                Logger.Log<ParsecService>("Warning", $"2049 Организация добавлена успешно: {org.NAME} " +
+                    $"| ID: {org.ID} Parent ID: {org.PARENT_ID} " +
+                    $"divcode: {model.DIVCODE} IdOrg: {model.ID_ORG}");
+                state.desc = "2052 Организация добавлена успешно";
+                state.IdCardindev = row.ID;
+                state.Operation = StateService.GetOperationName(row.OPERATION);
+                state.OperationCode = row.OPERATION;
+                state.Status = "OK";
+                state.Attempts = row.ATTEMPS;
+                state.Timestamp = DateTime.Now;
+                state.keyNum = Key.keyNumber;
+                Logger.Log<ParsecService>("Error", $"2060 stop AddOrg {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+                return state;
+            }
+            catch (Exception ex)
+            {
+                state.ErrorCode = 22;
+                var errorDesc = $"2066 КОД ОШИБКИ: {state.ErrorCode}. Ошибка в AddOrg: {ex.Message}";
+                Logger.Log<ParsecService>("Warning", errorDesc);
+                state.desc = errorDesc;
+                state.IdCardindev = row.ID;
+                state.Operation = StateService.GetOperationName(row.OPERATION);
+                state.OperationCode = row.OPERATION;
+                state.Status = "ERR";
+                state.ErrorMessage = ex.Message?.Replace("\r\n", " ") ?? "Unknown error";
+                state.Attempts = row.ATTEMPS;
+                state.Timestamp = DateTime.Now;
+                state.NextStart = DateTime.Now.AddMinutes(SettingsService.ErrorTimeoutMinutes);
+                state.keyNum = Key.keyNumber;
+                Logger.Log<ParsecService>("Error", $"2078 stop AddOrg {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                 throw;
             }
         }

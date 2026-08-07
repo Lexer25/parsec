@@ -255,7 +255,7 @@ namespace ParsecIntegrationClient
 
             // Проверка ключа Guardant перед запуском
             Logger.Log<Service1>("Warning", "177 Console: Checking Guardant key...");
-            bool keyFound = CheckGuardantKey();
+       /*     bool keyFound = CheckGuardantKey();
 
             if (keyFound)
             {
@@ -287,6 +287,8 @@ namespace ParsecIntegrationClient
                 Logger.Log<Service1>("Warning", "Guardant: Ошибка при проверке - ОГРАНИЧЕННЫЙ РЕЖИМ (10 транзакций)");
                 Console.WriteLine("Ошибка при проверке ключа - ограниченный режим (10 транзакций)");
             }
+
+            */
             License.SetLicenseStatus(true);
             // Выводим информацию о режиме работы
             if (License.IsLicensed)

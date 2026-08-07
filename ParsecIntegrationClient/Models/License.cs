@@ -21,11 +21,11 @@ namespace ParsecIntegrationClient.Models
             {
                 _isBlocked = false;
                 _transactionCounter = 0;
-                Logger.Log<Service1>("Info", $"Лицензия активна, все функции доступны");
+                Logger.Log<Service1>("Info", $"24 Лицензия активна, все функции доступны");
             }
             else
             {
-                Logger.Log<Service1>("Warning", $"Лицензия не найдена, доступно {RemainingTransactions} транзакций из {MaxFreeTransactions}");
+                Logger.Log<Service1>("Warning", $"28 Лицензия не найдена, доступно {RemainingTransactions} транзакций из {MaxFreeTransactions}");
             }
         }
 
@@ -33,7 +33,7 @@ namespace ParsecIntegrationClient.Models
         {
             if (_isBlocked)
             {
-                Logger.Log<Service1>("Warning", "Операции заблокированы - превышен лимит бесплатных транзакций");
+                Logger.Log<Service1>("Warning", "36 Операции заблокированы - превышен лимит бесплатных транзакций");
                 return false;
             }
 
@@ -43,12 +43,12 @@ namespace ParsecIntegrationClient.Models
             if (_transactionCounter < MaxFreeTransactions)
             {
                 _transactionCounter++;
-                Logger.Log<Service1>("Info", $"Выполняется транзакция {_transactionCounter}/{MaxFreeTransactions}. Осталось: {MaxFreeTransactions - _transactionCounter}");
+                Logger.Log<Service1>("Info", $"46 Выполняется транзакция {_transactionCounter}/{MaxFreeTransactions}. Осталось: {MaxFreeTransactions - _transactionCounter}");
                 return true;
             }
 
             _isBlocked = true;
-            Logger.Log<Service1>("Error", $"Достигнут лимит бесплатных транзакций ({MaxFreeTransactions}). Программа заблокирована.");
+            Logger.Log<Service1>("Error", $"51 Достигнут лимит бесплатных транзакций ({MaxFreeTransactions}). Программа заблокирована.");
             return false;
         }
 

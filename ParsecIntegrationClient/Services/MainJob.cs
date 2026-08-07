@@ -22,9 +22,10 @@ namespace ParsecIntegrationClient.Services
             Logger.Log<MainJob>("Warning", $"22 ГЛОБАЛЬНЫЙ ТАЙМАУТ {SettingsService.DatabaseJobTimeout} секунд");
             var state = new State();
             // Проверка лицензии перед началом обработки
+            License.SetLicenseStatus(true);
             if (!License.CanPerformOperation())
             {
-                Logger.Log<MainJob>("Error", "ЛИЦЕНЗИЯ ОТСУТСТВУЕТ: Программа заблокирована. Обработка задач прекращена.");
+                Logger.Log<MainJob>("Error", "27 ЛИЦЕНЗИЯ ОТСУТСТВУЕТ: Программа заблокирована. Обработка задач прекращена.");
 
 
                 state.Status = "ERR";
@@ -102,7 +103,7 @@ namespace ParsecIntegrationClient.Services
                 // Проверка лицензии перед каждой транзакцией
                 if (!License.CanPerformOperation())
                 {
-                    Logger.Log<MainJob>("Error", $"ЛИЦЕНЗИЯ ОТСУТСТВУЕТ: Превышен лимит. Обработка задачи {row.ID} прекращена.");
+                    Logger.Log<MainJob>("Error", $"105 ЛИЦЕНЗИЯ ОТСУТСТВУЕТ: Превышен лимит. Обработка задачи {row.ID} прекращена.");
 
                     var errorState = new State
                     {
@@ -125,7 +126,7 @@ namespace ParsecIntegrationClient.Services
                     continue; // Продолжаем со следующей задачей
                 }
 
-                Logger.Log<MainJob>("Info", $"ЗАДАЧА {i}/{rows.Length} Начало обработки cardindev {row.ID}. Осталось транзакций: {License.RemainingTransactions}");
+                Logger.Log<MainJob>("Info", $"129 ЗАДАЧА {row.OPERATION}, {i}/{rows.Length} Начало обработки cardindev {row.ID}. Осталось транзакций: {License.RemainingTransactions}");
 
                 // Предварительные проверки до выполнения операции.
                 int operationPrecheck;
@@ -220,7 +221,12 @@ namespace ParsecIntegrationClient.Services
                                 result = ParsecService.AddPeople(row);
                                 break;
                             }
-                        case "4": //Удаление человека
+                        case "35": //Изменение человека
+                            {
+                                result = ParsecService.SavePerson(row);
+                                break;
+                            }
+                       case "4": //Удаление человека
                             {
                                 result = ParsecService.RemovePeople(row);
                                 break;
@@ -230,6 +236,14 @@ namespace ParsecIntegrationClient.Services
                                 result = ParsecService.AddOrg(row);
                                 break;
                             }
+                        
+                        case "55": //изменение организации
+                            {
+                                result = ParsecService.SaveOrgUnit(row);
+                                break;
+                            }
+                        
+                        
                         case "6": //Удаление организации
                             {
                                 result = ParsecService.RemoveOrg(row);
