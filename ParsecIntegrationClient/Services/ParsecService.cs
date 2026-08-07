@@ -1699,8 +1699,7 @@ namespace ParsecIntegrationClient.Services
                     Logger.Log<ParsecService>("Info", $"1176 Существует организаци с указанным  GUID {Newtonsoft.Json.JsonConvert.SerializeObject(person)}. Продолжаю добавление сотрудника.");
 
                     var integServ = new IntegrationService();
-                    //var sessionResult = integServ.OpenPersonEditingSession(ClientState.SessionID, new Guid(model.GUID_PEP));
-                    
+                                        
                     var sessionResult = integServ.OpenPersonEditingSession(ClientState.SessionID, new Guid(people.GUID_PEP));
 
                     var res = integServ.SavePerson(sessionResult.Value, person);
