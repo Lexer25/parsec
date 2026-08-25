@@ -347,7 +347,7 @@ namespace ParsecIntegrationClient.Services
             IntegrationService integServ,
             DbModelRowIDInDev row)
         {
-            Logger.Log<ParsecService>("Info", $"Обработка карты {identifier.CODE}");
+            Logger.Log<ParsecService>("Info", $"350 Обработка карты {identifier.CODE} добавление категории доступ {accessGroupGuid}");
 
             // Создаем копию для обновления
             var updatedIdentifier = identifier;
@@ -359,7 +359,7 @@ namespace ParsecIntegrationClient.Services
             updatedIdentifier.ACCGROUP_ID = newGroupId;
 
             // Логируем обновление
-            Logger.Log<ParsecService>("Info", $"Обновление идентификатора: CODE={updatedIdentifier.CODE}, ACCGROUP_ID={updatedIdentifier.ACCGROUP_ID}");
+            Logger.Log<ParsecService>("Info", $"362 Обновление идентификатора: CODE={updatedIdentifier.CODE}, добавляется группа ACCGROUP_ID={updatedIdentifier.ACCGROUP_ID}");
 
             // Вызываем метод обновления
             var result = integServ.AddPersonIdentifier(editSessionID, updatedIdentifier);
@@ -379,13 +379,14 @@ namespace ParsecIntegrationClient.Services
             Guid targetGroupId,
             IntegrationService integServ)
         {
+            Logger.Log<ParsecService>("Info", $"382 Старт формирования группы для {identifier.CODE}. Уже имеется группа {identifier.ACCGROUP_ID}, добавляется группа {targetGroupId}");
             // Если у идентификатора нет группы - просто назначаем целевую
             if (identifier.ACCGROUP_ID == Guid.Empty)
             {
-                Logger.Log<ParsecService>("Info", $"У карты {identifier.CODE} нет группы, назначаем {targetGroupId}");
+                Logger.Log<ParsecService>("Info", $"385 У карты {identifier.CODE} нет группы, назначаем {targetGroupId}");
                 return targetGroupId;
             }
-
+            Logger.Log<ParsecService>("Info", $"388 У карты {identifier.CODE} уже есть групп {identifier.ACCGROUP_ID}");
             // Формируем цепочку наследования
             var inheritedChain = BuildInheritedChain(identifier.ACCGROUP_ID, targetGroupId, integServ);
 
@@ -393,7 +394,7 @@ namespace ParsecIntegrationClient.Services
             var existingGroup = CheckAccessGroups(inheritedChain);
             if (existingGroup != Guid.Empty)
             {
-                Logger.Log<ParsecService>("Info", $"Найдена существующая группа {existingGroup}");
+                Logger.Log<ParsecService>("Info", $"396 Найдена существующая группа {existingGroup}");
                 return existingGroup;
             }
 
@@ -901,17 +902,19 @@ namespace ParsecIntegrationClient.Services
             {
                 // Получаем идентификаторы пользователя
                 var identifiers = integServ.GetPersonIdentifiers(ClientState.SessionID, new Guid(model.GUID_PEP));
+                Logger.Log<ParsecService>("Warning", $"905 identifier {Newtonsoft.Json.JsonConvert.SerializeObject(identifiers)} for remove {accessGroupGuid}  ");
                 if (identifiers == null || identifiers.Length == 0)
                 {
                     Logger.Log<ParsecService>("Warning", $"906 У пользователя {person.FIRST_NAME} нет идентификаторов");
                     return CreateSuccessState(row, "907 Идентификаторы не найдены, задача удалена");
                 }
 
-                Logger.Log<ParsecService>("Info", $"910 Найдено {identifiers.Length} идентификаторов для {person.FIRST_NAME}");
+                Logger.Log<ParsecService>("Info", $"910 Найдено {identifiers.Length} идентификаторов для {person.FIRST_NAME} {person.MIDDLE_NAME} {person.LAST_NAME} ");
 
                 // Обрабатываем каждый идентификатор
                 foreach (var identifier in identifiers)
                 {
+                    Logger.Log<ParsecService>("Warning", $"917 identifier {Newtonsoft.Json.JsonConvert.SerializeObject(identifier)} for remove {accessGroupGuid}  ");
                     ProcessSingleIdentifierRemoval(
                         identifier,
                         accessGroupGuid,
@@ -938,8 +941,9 @@ namespace ParsecIntegrationClient.Services
             IntegrationService integServ,
             DbModelRowIDInDev row)
         {
-            Logger.Log<ParsecService>("Info", $"941 Обработка удаления для карты {identifier.CODE} {identifier.ACCGROUP_ID}");
-
+            Logger.Log<ParsecService>("Info", $"941 Обработка удаления для карты {identifier.CODE} {identifier.ACCGROUP_ID}. Удаляю категорию доступа {accessGroupToRemove}");
+            Logger.Log<ParsecService>("Info", $"943 идентификатор: {string.Join(" -> ", identifier)}");
+            
             // Проверяем, есть ли у идентификатора группа доступа
             if (identifier.ACCGROUP_ID == Guid.Empty || identifier.ACCGROUP_ID.ToString() == "00000000-0000-0000-0000-000000000000")
             {
@@ -973,7 +977,7 @@ namespace ParsecIntegrationClient.Services
 
             // Логируем обновление
             Logger.Log<ParsecService>("Info", $"975 Обновление идентификатора: CODE={updatedIdentifier.CODE}, ACCGROUP_ID={updatedIdentifier.ACCGROUP_ID}");
-
+            Logger.Log<ParsecService>("Warning", $"975-1 update identifier data {Newtonsoft.Json.JsonConvert.SerializeObject(updatedIdentifier)}  ");
             // Вызываем метод обновления
             var result = integServ.AddPersonIdentifier(editSessionID, updatedIdentifier);
 
@@ -994,6 +998,10 @@ namespace ParsecIntegrationClient.Services
             Guid removedGroupId,
             IntegrationService integServ)
         {
+            Logger.Log<ParsecService>("Warning", $"1001-0 originalIdentifier {Newtonsoft.Json.JsonConvert.SerializeObject(originalIdentifier)}  ");
+            Logger.Log<ParsecService>("Warning", $"1001-1 inheritedGroups {Newtonsoft.Json.JsonConvert.SerializeObject(inheritedGroups)}  ");
+            Logger.Log<ParsecService>("Warning", $"1001-2 inheritedGroups {Newtonsoft.Json.JsonConvert.SerializeObject(removedGroupId)}  ");
+
             var updatedIdentifier = originalIdentifier;
 
             if (inheritedGroups.Count == 0)
