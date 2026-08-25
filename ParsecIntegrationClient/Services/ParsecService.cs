@@ -288,15 +288,15 @@ namespace ParsecIntegrationClient.Services
 
             if (person == null)
             {
-                Logger.Log<ParsecService>("Warning", $"Пользователь с GUID: {model.GUID_PEP} не найден в Parsec");
-                return CreateSuccessState(row, "Пользователь не найден в Parsec");
+                Logger.Log<ParsecService>("Warning", $"291 Пользователь с GUID: {model.GUID_PEP} не найден в Parsec");
+                return CreateSuccessState(row, "292 Пользователь не найден в Parsec");
             }
 
             // Открываем сессию редактирования
             var sessionResult = integServ.OpenPersonEditingSession(ClientState.SessionID, new Guid(model.GUID_PEP));
             if (sessionResult.Result != ClientState.Result_Success)
             {
-                var errorMsg = $"Ошибка открытия сессии редактирования: {sessionResult.ErrorMessage}";
+                var errorMsg = $"299 Ошибка открытия сессии редактирования: {sessionResult.ErrorMessage}";
                 Logger.Log<ParsecService>("Error", errorMsg);
                 return CreateErrorState(row, errorMsg, 7);
             }
@@ -309,7 +309,7 @@ namespace ParsecIntegrationClient.Services
                 var identifiers = integServ.GetPersonIdentifiers(ClientState.SessionID, new Guid(model.GUID_PEP));
                 if (identifiers == null || identifiers.Length == 0)
                 {
-                    Logger.Log<ParsecService>("Warning", $"У пользователя {person.FIRST_NAME} нет идентификаторов");
+                    Logger.Log<ParsecService>("Warning", $"312 У пользователя {person.FIRST_NAME} нет идентификаторов");
                     return CreateSuccessState(row, "Идентификаторы не найдены");
                 }
 
@@ -938,7 +938,7 @@ namespace ParsecIntegrationClient.Services
             IntegrationService integServ,
             DbModelRowIDInDev row)
         {
-            Logger.Log<ParsecService>("Info", $"941 Обработка удаления для карты {identifier.CODE}");
+            Logger.Log<ParsecService>("Info", $"941 Обработка удаления для карты {identifier.CODE} {identifier.ACCGROUP_ID}");
 
             // Проверяем, есть ли у идентификатора группа доступа
             if (identifier.ACCGROUP_ID == Guid.Empty || identifier.ACCGROUP_ID.ToString() == "00000000-0000-0000-0000-000000000000")
@@ -959,7 +959,7 @@ namespace ParsecIntegrationClient.Services
             if (!removed)
             {
                 Logger.Log<ParsecService>("Warning", $"961 Группа {accessGroupToRemove} не найдена в цепочке наследования карты {identifier.CODE}");
-                return;
+                //return;
             }
 
             Logger.Log<ParsecService>("Info", $"965 После удаления группы {accessGroupToRemove}: {string.Join(" -> ", inheritedAccessGroups)}");
@@ -999,14 +999,16 @@ namespace ParsecIntegrationClient.Services
             if (inheritedGroups.Count == 0)
             {
                 // Если группа была единственной - очищаем ACCGROUP_ID
-                updatedIdentifier.ACCGROUP_ID = Guid.Empty;
-                Logger.Log<ParsecService>("Info", $"У карты {originalIdentifier.CODE} не осталось групп, ACCGROUP_ID = Guid.Empty");
+                if (originalIdentifier.ACCGROUP_ID == removedGroupId) {
+                    updatedIdentifier.ACCGROUP_ID = Guid.Empty;
+                    Logger.Log<ParsecService>("Info", $"1004 У карты {originalIdentifier.CODE} не осталось групп, ACCGROUP_ID = Guid.Empty");
+                }
             }
             else if (inheritedGroups.Count == 1)
             {
                 // Если осталась одна группа - назначаем её
                 updatedIdentifier.ACCGROUP_ID = inheritedGroups[0];
-                Logger.Log<ParsecService>("Info", $"У карты {originalIdentifier.CODE} осталась одна группа {inheritedGroups[0]}");
+                Logger.Log<ParsecService>("Info", $"1011 У карты {originalIdentifier.CODE} осталась одна группа {inheritedGroups[0]}");
             }
             else
             {
@@ -1016,13 +1018,13 @@ namespace ParsecIntegrationClient.Services
                 if (existingGroup != Guid.Empty)
                 {
                     updatedIdentifier.ACCGROUP_ID = existingGroup;
-                    Logger.Log<ParsecService>("Info", $"Найдена существующая группа {existingGroup} для цепочки");
+                    Logger.Log<ParsecService>("Info", $"1021 Найдена существующая группа {existingGroup} для цепочки");
                 }
                 else
                 {
                     // Создаем новую группу с оставшейся цепочкой
                     updatedIdentifier.ACCGROUP_ID = CreateAccessGroupWithInheritance(inheritedGroups, integServ);
-                    Logger.Log<ParsecService>("Info", $"Создана новая группа {updatedIdentifier.ACCGROUP_ID} для оставшейся цепочки");
+                    Logger.Log<ParsecService>("Info", $"С1027 оздана новая группа {updatedIdentifier.ACCGROUP_ID} для оставшейся цепочки");
                 }
             }
 
