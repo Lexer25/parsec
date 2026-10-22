@@ -66,7 +66,7 @@ namespace ParsecIntegrationClient.Services
             Logger.Log<MainJob>("Warning", $"64 Получено {rows.Length} записей для выполнения");
 
             // Проверяем глобальный таймаут ошибок перед началом обработки
-            var stateFilePath = StateService.DefaultStateFilePath;
+  /*          var stateFilePath = StateService.DefaultStateFilePath;
             if (File.Exists(stateFilePath))
             {
                 var stateJson = File.ReadAllText(stateFilePath);
@@ -92,6 +92,7 @@ namespace ParsecIntegrationClient.Services
                 }
                 Logger.Log<MainJob>("Warning", $"91 отладка");
             }
+  */
             Logger.Log<MainJob>("Warning", $"90 Продолжаю работу с {rows.Length} записями.");
             // Далее после команды обновляем state-файл, читая только "новые" строки.
             var logFilePath = StateService.GetLogFilePath(DateTime.Now);

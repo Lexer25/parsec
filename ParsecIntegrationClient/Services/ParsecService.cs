@@ -480,10 +480,19 @@ namespace ParsecIntegrationClient.Services
         }
 
         /// <summary>
-        /// Закрытие сессии редактирования
+        /// Закрытие сессии редактирования человека.
+        /// Вызывается из блока finally, поэтому НИКОГДА не выбрасывает исключение:
+        /// иначе оно подменило бы исходную ошибку операции и изменило бы поведение на ошибках.
+        /// Пустой идентификатор означает, что сессия не была открыта - закрывать нечего.
         /// </summary>
         private static void CloseEditingSession(IntegrationService integServ, Guid sessionId)
         {
+            if (integServ == null || sessionId == Guid.Empty)
+            {
+                Logger.Log<ParsecService>("Warning", "CloseEditingSession: сессия не была открыта (пустой идентификатор), закрытие пропущено");
+                return;
+            }
+
             try
             {
                 integServ.ClosePersonEditingSession(sessionId);
@@ -491,7 +500,30 @@ namespace ParsecIntegrationClient.Services
             }
             catch (Exception ex)
             {
-                Logger.Log<ParsecService>("Warning", $"Ошибка при закрытии сессии: {ex.Message}");
+                Logger.Log<ParsecService>("Warning", $"Ошибка при закрытии сессии {sessionId}: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Закрытие сессии редактирования организации (подразделения).
+        /// Требования те же, что и у CloseEditingSession: вызов идёт из finally и не выбрасывает исключений.
+        /// </summary>
+        private static void CloseOrgUnitEditingSession(IntegrationService integServ, Guid sessionId)
+        {
+            if (integServ == null || sessionId == Guid.Empty)
+            {
+                Logger.Log<ParsecService>("Warning", "CloseOrgUnitEditingSession: сессия не была открыта (пустой идентификатор), закрытие пропущено");
+                return;
+            }
+
+            try
+            {
+                integServ.CloseOrgUnitEditingSession(sessionId);
+                Logger.Log<ParsecService>("Info", $"Сессия редактирования организации {sessionId} закрыта");
+            }
+            catch (Exception ex)
+            {
+                Logger.Log<ParsecService>("Warning", $"Ошибка при закрытии сессии организации {sessionId}: {ex.Message}");
             }
         }
 
@@ -1208,6 +1240,8 @@ namespace ParsecIntegrationClient.Services
             var _editSessionID = res.Value;
             addDisc("editing_session_opened");
 
+            try
+            {
             var identifiers = integServ.GetPersonIdentifiers(ClientState.SessionID, new Guid(model.GUID_PEP));
             addDisc("after_get_identifiers");
 
@@ -1475,6 +1509,13 @@ namespace ParsecIntegrationClient.Services
                 state.keyNum = Key.keyNumber;
                 return state;
             }
+            }
+            finally
+            {
+                // Сессия редактирования человека закрывается на любом пути выхода из метода.
+                // Без этого она остаётся открытой на сервере и блокирует человека для следующих операций.
+                CloseEditingSession(integServ, _editSessionID);
+            }
         }
 
         /// <summary>
@@ -1713,6 +1754,8 @@ namespace ParsecIntegrationClient.Services
                                         
                     var sessionResult = integServ.OpenPersonEditingSession(ClientState.SessionID, new Guid(people.GUID_PEP));
 
+                    try
+                    {
                     var res = integServ.SavePerson(sessionResult.Value, person);
 
                     if (res.Result != ClientState.Result_Success)
@@ -1745,6 +1788,12 @@ namespace ParsecIntegrationClient.Services
                     state.keyNum = Key.keyNumber;
                     Logger.Log<ParsecService>("Error", $"1732 stop SavePerson {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                     return state;
+                    }
+                    finally
+                    {
+                        // Сессия редактирования человека закрывается на любом пути выхода из метода.
+                        CloseEditingSession(integServ, sessionResult.Value);
+                    }
                 }
 
                 var descNotFound = $"1736 Пользователь с {row.ID_PEP} не найден в базе СКУД Артонит.";
@@ -2042,6 +2091,8 @@ namespace ParsecIntegrationClient.Services
                     DESC = ""
                 };
                 var sessionResult = integServ.OpenOrgUnitEditingSession(ClientState.SessionID, new Guid(model.GUID));
+                try
+                {
                 var result = integServ.SaveOrgUnit(sessionResult.Value, org);
                 if (result.Result != ClientState.Result_Success)
                 {
@@ -2075,6 +2126,12 @@ namespace ParsecIntegrationClient.Services
                 state.keyNum = Key.keyNumber;
                 Logger.Log<ParsecService>("Error", $"2060 stop AddOrg {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
                 return state;
+                }
+                finally
+                {
+                    // Сессия редактирования организации закрывается на любом пути выхода из метода.
+                    CloseOrgUnitEditingSession(integServ, sessionResult.Value);
+                }
             }
             catch (Exception ex)
             {
@@ -2230,6 +2287,8 @@ namespace ParsecIntegrationClient.Services
 
                             var _editSessionID = res.Value;
 
+                            try
+                            {
                             var creatingItem = new BaseIdentifier();
 
                             creatingItem.IS_PRIMARY = true;
@@ -2272,6 +2331,12 @@ namespace ParsecIntegrationClient.Services
                             StateService.SaveState(state);
                             DatabaseService.DeleteIdInDevById(row.ID);
                             return state;
+                            }
+                            finally
+                            {
+                                // Сессия редактирования человека закрывается на любом пути выхода из метода.
+                                CloseEditingSession(integServ, _editSessionID);
+                            }
                         }
                         else
                         {
