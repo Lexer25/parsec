@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 
 
 namespace ParsecIntegrationClient.Services
@@ -1967,6 +1968,7 @@ namespace ParsecIntegrationClient.Services
                 state.Timestamp = DateTime.Now;
                 state.keyNum = Key.keyNumber;
                 Logger.Log<ParsecService>("Error", $"1434 stop AddOrg {Newtonsoft.Json.JsonConvert.SerializeObject(row.ID)}");
+                Thread.Sleep(1000); // Задержка 1 секунда
                 return state;
             }
             catch (Exception ex)
